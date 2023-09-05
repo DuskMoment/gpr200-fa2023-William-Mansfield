@@ -85,7 +85,7 @@ int main() {
 	glEnableVertexAttribArray(0);
 	//MAKE A FUNCTION
 
-	//MAKE ANOTHER FUNCTION
+	//MAKE ANOTHER FUNCTION this is the body for create shader
 	//create a new shader object
 	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
 
