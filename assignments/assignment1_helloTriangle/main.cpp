@@ -23,9 +23,13 @@ float vertices[21] =
 const char* vertexShaderSource = R"(
 	#version 450
 	layout(location = 0) in vec3 vPos;
+	layout(location = 1) in vec4 vColor;
+	out vec4 Color;
+	uniform float _Time;
 	void main(){
-		
-		gl_Position = vec4(vPos,1.0);
+		Color = vColor;
+		vec3 offset = vec3(0,sin(vPos.x+_Time),0)*0.5;
+		gl_Position = vec4(vPos + offset,1.0);
 	}
 )";
 //fragemnt shader
@@ -35,8 +39,11 @@ const char* vertexShaderSource = R"(
 const char* fragmentShaderSource = R"(
 	#version 450
 	out vec4 FragColor;
+	in vec4 Color;
+	uniform float _Time;
+	
 	void main(){
-		FragColor = vec4(1.0);
+		FragColor = Color * abs(sin(_Time));
 	}
 )";
 unsigned int createVAO(float* vertexData, int numVertices)
@@ -49,8 +56,6 @@ unsigned int createVAO(float* vertexData, int numVertices)
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
 
-	
-	
 
 	//Vertex Buffer Object (VBO) (used to send data to the GPU a buffer)
 	//define new buffer id
@@ -65,12 +70,13 @@ unsigned int createVAO(float* vertexData, int numVertices)
 
 	//define position atributes (tells us how to handel the float data from the vertices)
 	//position artibute
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (const void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 7, (const void*)0);
 	glEnableVertexAttribArray(0);
 
 	////color atribute
-	/*glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 7, (const void*)(sizeof(float) * 3));
-	glEnableVertexAttribArray(1);*/
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 7, (const void*)(sizeof(float) * 3));
+	glEnableVertexAttribArray(1);
+
 	
 
 	return vao;
@@ -104,6 +110,9 @@ unsigned int createShaderProgram(const char* vertexShaderSource, const char* fra
 	unsigned int fragmentShader = createShader(GL_FRAGMENT_SHADER, fragmentShaderSource);
 
 	unsigned int shaderProgram = glCreateProgram();
+
+	glAttachShader(shaderProgram, vertexShader);
+	glAttachShader(shaderProgram, fragmentShader);
 	glLinkProgram(shaderProgram);
 
 	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
@@ -143,7 +152,7 @@ int main() {
 	}
 	//finds all of the gl functions. all fuctions should start with gl -- commuitcating from the cpu to the gpu
 	//Vertex Array Object (VAO)
-	unsigned int vao = createVAO(vertices, 9);
+	unsigned int vao = createVAO(vertices, 21);
 
 	unsigned int shader = createShaderProgram(vertexShaderSource, fragmentShaderSource);
 
@@ -156,6 +165,13 @@ int main() {
 		// draw calls go here
 		glBindVertexArray(vao);
 		glUseProgram(shader);
+
+		float time = (float)glfwGetTime();
+
+		int timeLocation = glGetUniformLocation(shader, "_Time");
+
+		glUniform1f(timeLocation, time);
+
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
 		glfwSwapBuffers(window);
