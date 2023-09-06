@@ -154,7 +154,7 @@ int main() {
 	//Vertex Array Object (VAO)
 	unsigned int vao = createVAO(vertices, 21);
 
-	unsigned int shader = createShaderProgram(vertexShaderSource, fragmentShaderSource);
+	unsigned int shaderProgram = createShaderProgram(vertexShaderSource, fragmentShaderSource);
 
 	//this is our render loop
 	while (!glfwWindowShouldClose(window)) {
@@ -164,11 +164,11 @@ int main() {
 
 		// draw calls go here
 		glBindVertexArray(vao);
-		glUseProgram(shader);
+		glUseProgram(shaderProgram);
 
 		float time = (float)glfwGetTime();
 
-		int timeLocation = glGetUniformLocation(shader, "_Time");
+		int timeLocation = glGetUniformLocation(shaderProgram, "_Time");
 
 		glUniform1f(timeLocation, time);
 
@@ -177,6 +177,5 @@ int main() {
 		glfwSwapBuffers(window);
 	}
 	printf("Shutting down...");
-
 }
 
