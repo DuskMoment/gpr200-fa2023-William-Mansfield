@@ -28,7 +28,7 @@ const char* vertexShaderSource = R"(
 	uniform float _Time;
 	void main(){
 		Color = vColor;
-		vec3 offset = vec3(0,sin(vPos.x+_Time),0)*0.5;
+		vec3 offset = vec3(tan(cos(vPos.y+_Time)),abs(sin(vPos.x + _Time)),0)*0.5;
 		gl_Position = vec4(vPos + offset,1.0);
 	}
 )";
@@ -61,6 +61,7 @@ unsigned int createVAO(float* vertexData, int numVertices)
 	//define new buffer id
 	unsigned int vbo;
 	glGenBuffers(1, &vbo);
+
 	//after creating our new vbo buffer we then put it in the GL_ARRAY_BUFFER slot making it our new buffer
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	//allacate space to the buffer and send vertex data to the cpu. it also sends data to our gpu
@@ -77,11 +78,10 @@ unsigned int createVAO(float* vertexData, int numVertices)
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 7, (const void*)(sizeof(float) * 3));
 	glEnableVertexAttribArray(1);
 
-	
-
 	return vao;
 };
 
+//creates the shader takes in the type and a referenece to the soure code 
 unsigned int createShader(GLenum shaderType, const char* sourceCode)
 {
 	unsigned int shader = glCreateShader(shaderType);
@@ -104,13 +104,14 @@ unsigned int createShader(GLenum shaderType, const char* sourceCode)
 unsigned int createShaderProgram(const char* vertexShaderSource, const char* fragmentShaderSource)
 {
 	int success;
+
 	unsigned int vertexShader = createShader(GL_VERTEX_SHADER, vertexShaderSource);
 
-	//attach each stage
 	unsigned int fragmentShader = createShader(GL_FRAGMENT_SHADER, fragmentShaderSource);
 
 	unsigned int shaderProgram = glCreateProgram();
 
+	//creates and attaches shader program
 	glAttachShader(shaderProgram, vertexShader);
 	glAttachShader(shaderProgram, fragmentShader);
 	glLinkProgram(shaderProgram);
@@ -151,27 +152,28 @@ int main() {
 		return 1;
 	}
 	//finds all of the gl functions. all fuctions should start with gl -- commuitcating from the cpu to the gpu
+	// 
 	//Vertex Array Object (VAO)
 	unsigned int vao = createVAO(vertices, 21);
-
+	//create shader program
 	unsigned int shaderProgram = createShaderProgram(vertexShaderSource, fragmentShaderSource);
 
 	//this is our render loop
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();//input
 		glClearColor(0.3f, 0.4f, 0.9f, 1.0f);
+		//clears all the colors
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		// draw calls go here
-		glBindVertexArray(vao);
+		
 		glUseProgram(shaderProgram);
+		glBindVertexArray(vao);
 
 		float time = (float)glfwGetTime();
-
 		int timeLocation = glGetUniformLocation(shaderProgram, "_Time");
 
 		glUniform1f(timeLocation, time);
-
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
 		glfwSwapBuffers(window);
