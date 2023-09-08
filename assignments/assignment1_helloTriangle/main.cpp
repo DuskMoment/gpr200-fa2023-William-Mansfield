@@ -32,7 +32,7 @@ const char* vertexShaderSource = R"(
 		gl_Position = vec4(vPos + offset,1.0);
 	}
 )";
-//fragemnt shader
+//fragement shader
 //handles the color
 // 1.0 is white and 0 is black
 // vect4(r,g,b,alpha(trasparency))
@@ -49,7 +49,7 @@ const char* fragmentShaderSource = R"(
 unsigned int createVAO(float* vertexData, int numVertices)
 {
 
-	//needs to return vao
+	
 	//Vertex Array Object (VAO)
 	unsigned int vao;
 
@@ -152,7 +152,7 @@ int main() {
 		return 1;
 	}
 	//finds all of the gl functions. all fuctions should start with gl -- commuitcating from the cpu to the gpu
-	// 
+	
 	//Vertex Array Object (VAO)
 	unsigned int vao = createVAO(vertices, 21);
 	//create shader program
