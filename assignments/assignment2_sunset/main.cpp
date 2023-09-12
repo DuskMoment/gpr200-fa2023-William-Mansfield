@@ -74,13 +74,18 @@ int main() {
 	ImGui_ImplOpenGL3_Init();
 
 	//put your shader function
-	std::string vertexShaderSource = wm::loadShaderSourceFile("assets/vertexShader.vert");
+	/*std::string vertexShaderSource = wm::loadShaderSourceFile("assets/vertexShader.vert");
 	std::string fragmentShaderSource = wm::loadShaderSourceFile("assets/fragmentShader.frag");
 
-	unsigned int shader = createShaderProgram(vertexShaderSource.c_str(), fragmentShaderSource.c_str());
+	unsigned int shader = createShaderProgram(vertexShaderSource.c_str(), fragmentShaderSource.c_str());*/
+
+	//I MADE
+	wm::Shader shader("assets/vertexShader.vert", "assets/fragmentShader.frag");
+	shader.use();
+
 	unsigned int vao = createVAO(vertices, 3);
 
-	glUseProgram(shader);
+	/*glUseProgram(shader);*/
 	glBindVertexArray(vao);
 
 	while (!glfwWindowShouldClose(window)) {
@@ -89,8 +94,12 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		//Set uniforms
-		glUniform3f(glGetUniformLocation(shader, "_Color"), triangleColor[0], triangleColor[1], triangleColor[2]);
-		glUniform1f(glGetUniformLocation(shader,"_Brightness"), triangleBrightness);
+		//glUniform3f(glGetUniformLocation(shader, "_Color"), triangleColor[0], triangleColor[1], triangleColor[2]);
+		//glUniform1f(glGetUniformLocation(shader,"_Brightness"), triangleBrightness);
+
+		//NEW STUFF THAT I MADE
+		shader.setVec3("_Color", triangleColor[0], triangleColor[1], triangleColor[2]);
+		shader.setFloat("_Brightness", triangleBrightness);
 
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
@@ -104,6 +113,8 @@ int main() {
 			ImGui::Checkbox("Show Demo Window", &showImGUIDemoWindow);
 			ImGui::ColorEdit3("Color", triangleColor);
 			ImGui::SliderFloat("Brightness", &triangleBrightness, 0.0f, 1.0f);
+			//put new UI here
+			
 			ImGui::End();
 			if (showImGUIDemoWindow) {
 				ImGui::ShowDemoWindow(&showImGUIDemoWindow);
