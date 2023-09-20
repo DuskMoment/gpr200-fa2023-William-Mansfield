@@ -94,7 +94,7 @@ int main() {
 	shader.use();
 
 	//shouldent this be 6 and 2? but when that happens it does not work
-	unsigned int vao = createVAO(vertices, 4 ,indices, 6);
+	unsigned int vao = createVAO(vertices, 4 ,indices, 2);
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	/*glUseProgram(shader);*/
 	glBindVertexArray(vao);
@@ -199,7 +199,7 @@ unsigned int createVAO(Vertex* vertexData, int numVertices, unsigned int* indice
 	unsigned int ebo;
 	glGenVertexArrays(1, &ebo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * numIndices, indicesData, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * numIndices * 3, indicesData, GL_STATIC_DRAW);
 
 	//Position attribute
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const void*)0);
