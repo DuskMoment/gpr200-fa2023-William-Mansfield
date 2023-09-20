@@ -15,7 +15,7 @@ namespace wm
 		void setFloat(const std::string& name, float v) const;
 		void setVec2(const std::string& name, float x, float y) const;
 		void setVec3(const std:: string& name, float x, float y, float z) const;
-		void setVec$(const std::string& name, float x, float y, float z, float w) const;
+		void setVec4(const std::string& name, float x, float y, float z, float w) const;
 	private:
 		unsigned int m_id;// shader program handle
 	};
