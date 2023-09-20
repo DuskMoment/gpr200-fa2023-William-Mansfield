@@ -53,7 +53,13 @@ unsigned int indices[6] = {
 //	}
 //)";
 
-float triangleColor[3] = { 1.0f, 0.5f, 0.0f };
+float sunTopColor[3] = {0.8, 0.6, 0.0 };
+float sunBottomColor[3] = { 0.6, 0.0, 0.0 };
+
+float fgColor[3] = { 0.2, 0.2, 0.2 };
+
+float bgTopColor[3] = { 0.1, 0.1, 0.2 };
+float bgBottomColor[3] = { 1.0, 0.5, 0.3 };
 float triangleBrightness = 1.0f;
 bool showImGUIDemoWindow = true;
 
@@ -99,6 +105,8 @@ int main() {
 	/*glUseProgram(shader);*/
 	glBindVertexArray(vao);
 
+	
+
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
 		glClearColor(0.3f, 0.4f, 0.9f, 1.0f);
@@ -107,7 +115,20 @@ int main() {
 		//Set uniforms
 		//glUniform3f(glGetUniformLocation(shader, "_Color"), triangleColor[0], triangleColor[1], triangleColor[2]);
 		//glUniform1f(glGetUniformLocation(shader,"_Brightness"), triangleBrightness);
+		shader.setFloat("_Time", (float)glfwGetTime());
+		shader.setVec2("_Resolution", SCREEN_WIDTH, SCREEN_HEIGHT);
 
+		//backround 
+		shader.setVec3("_BgTopColor",bgTopColor[0], bgTopColor[1],bgTopColor[2]);
+		shader.setVec3("_BgBottomColor", bgBottomColor[0], bgBottomColor[1], bgBottomColor[2]);
+
+		//sun 
+		shader.setVec3("_SunTopColor", sunTopColor[0], sunTopColor[1], sunTopColor[2]);
+		shader.setVec3("_SunBottomColor", sunBottomColor[0], sunBottomColor[1], sunBottomColor[2]);
+
+		//forground
+		shader.setVec3("_FgColor", fgColor[0], fgColor[1], fgColor[2]);
+		
 		//NEW STUFF THAT I MADE
 		//shader.setVec3("_Color", triangleColor[0], triangleColor[1], triangleColor[2]);
 		//shader.setFloat("_Brightness", triangleBrightness);
@@ -124,8 +145,15 @@ int main() {
 
 			ImGui::Begin("Settings");
 			ImGui::Checkbox("Show Demo Window", &showImGUIDemoWindow);
-			ImGui::ColorEdit3("Color", triangleColor);
+			//changed
+			ImGui::ColorEdit3("sunTopColor", sunTopColor);
+			ImGui::ColorEdit3("sunBottomColor", sunBottomColor);
+			//unchanged
 			ImGui::SliderFloat("Brightness", &triangleBrightness, 0.0f, 1.0f);
+			//changed
+			ImGui::ColorEdit3("forgroundColor", fgColor);
+			ImGui::ColorEdit3("backroundTopColor", bgTopColor);
+			ImGui::ColorEdit3("backRoundBottomColor", bgBottomColor);
 			//put new UI here
 			
 			ImGui::End();

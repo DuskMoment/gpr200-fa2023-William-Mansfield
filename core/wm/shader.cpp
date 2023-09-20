@@ -91,7 +91,7 @@ namespace wm
 	{
 		glUniform3f(glGetUniformLocation(m_id, name.c_str()), x, y, z);
 	}
-	void Shader::setVec$(const std::string& name, float x, float y, float z, float w) const
+	void Shader::setVec4(const std::string& name, float x, float y, float z, float w) const
 	{
 		glUniform4f(glGetUniformLocation(m_id, name.c_str()), x, y, z, w);
 	}
