@@ -4,14 +4,18 @@
 	uniform float _Brightness;
 	uniform vec2 _Resolution;
 	uniform float _Time;
+    uniform float _Speed;
 
     uniform vec3 _BgTopColor;
     uniform vec3 _BgBottomColor;
 
     uniform vec3 _SunTopColor;
     uniform vec3 _SunBottomColor;
+    uniform float _SunRad;
+
 
     uniform vec3 _FgColor;
+
 
 	in vec2 UV;
 	void main(){
@@ -25,9 +29,11 @@
         vec3 bgBottomColor = _BgBottomColor;
         vec3 sunTopColor = _SunTopColor;
         vec3 sunBottomColor = _SunBottomColor;
+        float sunRad = _SunRad;
         vec3 fgColor = _FgColor;
+        float speed = _Speed;
 
-        float t = sin(iTime);
+        float t = sin(iTime * speed);
 
 		uv = uv*2.0-1.0;
 		float aspectRatio =  iResolution.x/ iResolution.y;
@@ -42,15 +48,15 @@
 
        //sun
        float sun = distance(uv,vec2(0.0,t - 0.6));
-       sun = smoothstep(0.4,0.7,sun);
+       sun = smoothstep(0.4,0.7,sun + sunRad);
        vec3 sunColor = mix(sunBottomColor,sunTopColor,t);
         
        color = mix(sunColor,color, sun);
 
         //forground
-        float hills = step(sin(uv.x*6.0) * 0.1 - 0.5,uv.y);
+        float fg = step(sin(floor(uv.x*4.0)*4.0) * 0.7 - 0.5,uv.y);
         
-        color = mix(fgColor,color,hills);
+        color = mix(fgColor,color,fg);
 
 		FragColor = vec4(color,1.0);
 	}

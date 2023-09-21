@@ -55,6 +55,8 @@ unsigned int indices[6] = {
 
 float sunTopColor[3] = {0.8, 0.6, 0.0 };
 float sunBottomColor[3] = { 0.6, 0.0, 0.0 };
+float speed = 1.0;
+float sunRadius = 0.0; 
 
 float fgColor[3] = { 0.2, 0.2, 0.2 };
 
@@ -116,6 +118,7 @@ int main() {
 		//glUniform3f(glGetUniformLocation(shader, "_Color"), triangleColor[0], triangleColor[1], triangleColor[2]);
 		//glUniform1f(glGetUniformLocation(shader,"_Brightness"), triangleBrightness);
 		shader.setFloat("_Time", (float)glfwGetTime());
+		shader.setFloat("_Speed", speed);
 		shader.setVec2("_Resolution", SCREEN_WIDTH, SCREEN_HEIGHT);
 
 		//backround 
@@ -125,6 +128,7 @@ int main() {
 		//sun 
 		shader.setVec3("_SunTopColor", sunTopColor[0], sunTopColor[1], sunTopColor[2]);
 		shader.setVec3("_SunBottomColor", sunBottomColor[0], sunBottomColor[1], sunBottomColor[2]);
+		shader.setFloat("_SunRad", sunRadius);
 
 		//forground
 		shader.setVec3("_FgColor", fgColor[0], fgColor[1], fgColor[2]);
@@ -148,6 +152,8 @@ int main() {
 			//changed
 			ImGui::ColorEdit3("sunTopColor", sunTopColor);
 			ImGui::ColorEdit3("sunBottomColor", sunBottomColor);
+			ImGui::SliderFloat("sunRadius", &sunRadius, -1.0f, 1.0f);
+			ImGui::SliderFloat("Speed", &speed, 0.0f, 2.0f);
 			//unchanged
 			ImGui::SliderFloat("Brightness", &triangleBrightness, 0.0f, 1.0f);
 			//changed
@@ -155,6 +161,7 @@ int main() {
 			ImGui::ColorEdit3("backroundTopColor", bgTopColor);
 			ImGui::ColorEdit3("backRoundBottomColor", bgBottomColor);
 			//put new UI here
+			//add sun speed and add radius
 			
 			ImGui::End();
 			if (showImGUIDemoWindow) {
