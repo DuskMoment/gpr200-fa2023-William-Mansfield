@@ -91,20 +91,13 @@ int main() {
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init();
 
-	//put your shader function
-	/*std::string vertexShaderSource = wm::loadShaderSourceFile("assets/vertexShader.vert");
-	std::string fragmentShaderSource = wm::loadShaderSourceFile("assets/fragmentShader.frag");
-
-	unsigned int shader = createShaderProgram(vertexShaderSource.c_str(), fragmentShaderSource.c_str());*/
-
-	//I MADE
+	
 	wm::Shader shader("assets/vertexShader.vert", "assets/fragmentShader.frag");
 	shader.use();
 
-	//shouldent this be 6 and 2? but when that happens it does not work
+	
 	unsigned int vao = createVAO(vertices, 4 ,indices, 2);
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	/*glUseProgram(shader);*/
+	
 	glBindVertexArray(vao);
 
 	
@@ -115,8 +108,7 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		//Set uniforms
-		//glUniform3f(glGetUniformLocation(shader, "_Color"), triangleColor[0], triangleColor[1], triangleColor[2]);
-		//glUniform1f(glGetUniformLocation(shader,"_Brightness"), triangleBrightness);
+	
 		shader.setFloat("_Time", (float)glfwGetTime());
 		shader.setFloat("_Speed", speed);
 		shader.setVec2("_Resolution", SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -133,9 +125,7 @@ int main() {
 		//forground
 		shader.setVec3("_FgColor", fgColor[0], fgColor[1], fgColor[2]);
 		
-		//NEW STUFF THAT I MADE
-		//shader.setVec3("_Color", triangleColor[0], triangleColor[1], triangleColor[2]);
-		//shader.setFloat("_Brightness", triangleBrightness);
+		
 
 		//glDrawArrays(GL_TRIANGLES, 0, 3);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
