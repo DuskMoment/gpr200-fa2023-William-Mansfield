@@ -9,6 +9,9 @@
 #include <imgui_impl_opengl3.h>
 
 #include <ew/shader.h>
+#include <wm/shader.h>
+
+#include <wm/texture.h>
 
 struct Vertex {
 	float x, y, z;
@@ -58,9 +61,17 @@ int main() {
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init();
 
-	ew::Shader shader("assets/vertexShader.vert", "assets/fragmentShader.frag");
+	// changed from ew to wm namespace
+	wm::Shader shader("assets/vertexShader.vert", "assets/fragmentShader.frag");
 
 	unsigned int quadVAO = createVAO(vertices, 4, indices, 6);
+
+	// do i need to give its own namespace?
+	unsigned int brickTexture = loadTexture("assets/109381-funny-donkey-download-free-image.png", GL_REPEAT, GL_LINEAR);
+
+	// created birck wall!!!!!!!
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, brickTexture);
 
 	glBindVertexArray(quadVAO);
 
@@ -70,6 +81,7 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		//Set uniforms
+		
 		shader.use();
 
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, NULL);
