@@ -2,8 +2,25 @@
 out vec4 FragColor;
 in vec2 UV;
 
-uniform sampler2D _Texture;
+
+uniform sampler2D _NoiseTexture;
+uniform sampler2D _BrickTexture;
+uniform sampler2D _DonkeyTexture;
+uniform float _Time;
 
 void main(){
-	FragColor = texture(_Texture, UV);
+
+	
+	float time = _Time;
+	
+	float noise = texture(_NoiseTexture,UV).r;
+	vec2 uv = UV + noise * (sin(time) * 0.1f);
+	vec4 colorA = texture(_BrickTexture,uv);
+	vec4 colorB = texture(_DonkeyTexture,uv);
+	//this is what puts the textures together
+	vec3 color = mix(colorA.rgb,colorB.rgb,colorB.a);
+
+	FragColor = vec4(color,1.0);
+
+
 }

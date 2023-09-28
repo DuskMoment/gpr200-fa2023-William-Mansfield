@@ -24,7 +24,7 @@
 		glGenTextures(1, &texture);
 		glBindTexture(GL_TEXTURE_2D, texture);
 
-		unsigned int format;
+		unsigned int format = GL_RGBA;
 		switch (numComponents)
 		{
 		case 1: format = GL_RED;

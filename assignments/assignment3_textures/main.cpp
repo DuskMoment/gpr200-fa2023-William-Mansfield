@@ -67,11 +67,23 @@ int main() {
 	unsigned int quadVAO = createVAO(vertices, 4, indices, 6);
 
 	// do i need to give its own namespace?
-	unsigned int brickTexture = loadTexture("assets/109381-funny-donkey-download-free-image.png", GL_REPEAT, GL_LINEAR);
+	unsigned int noiseTexture = loadTexture("assets/nosieMap.png", GL_REPEAT, GL_LINEAR);
+	unsigned int brickTexture = loadTexture("assets/bricks-bzc.png", GL_REPEAT, GL_LINEAR);
+	unsigned int donkeyTexture = loadTexture("assets/109381-funny-donkey-download-free-image.png", GL_REPEAT, GL_BUFFER);
 
-	// created birck wall!!!!!!!
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, brickTexture);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, donkeyTexture);
+
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, noiseTexture);
+
+	
+	// created birck wall!!!!!!!
+	
+	
 
 	glBindVertexArray(quadVAO);
 
@@ -81,8 +93,15 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		//Set uniforms
-		
+
 		shader.use();
+
+		shader.setInt("_BrickTexture", 0);
+		shader.setInt("_DonkeyTexture", 1);
+		shader.setInt("_NoiseTexture", 2);
+
+		shader.setFloat("_Time", (float)glfwGetTime());
+
 
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, NULL);
 
