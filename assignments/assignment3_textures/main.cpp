@@ -67,14 +67,15 @@ int main() {
 
 	unsigned int quadVAO = createVAO(vertices, 4, indices, 6);
 
-	// do i need to give its own namespace?
-	unsigned int noiseTexture = loadTexture("assets/Voronoi 6 - 128x128.png", GL_REPEAT, GL_LINEAR);
-	unsigned int brickTexture = loadTexture("assets/bricks-bzc.png", GL_REPEAT, GL_LINEAR);
-	unsigned int smileTexture = loadTexture("assets/109381-funny-donkey-download-free-image.png", GL_REPEAT, GL_LINEAR);
-	unsigned int faceTexture = loadTexture("assets/pixil-frame-0.png",GL_REPEAT,GL_NEAREST);
+	//load textures
+	unsigned int noiseTexture = wm::loadTexture("assets/waterNosieMap.jpg", GL_REPEAT, GL_LINEAR);
+	unsigned int brickTexture = wm::loadTexture("assets/Brick-wallaper-For-Background-33.jpg", GL_REPEAT, GL_LINEAR);
+	unsigned int smileTexture = wm::loadTexture("assets/smiley.png", GL_REPEAT, GL_LINEAR);
+	unsigned int faceTexture = wm::loadTexture("assets/pixil-frame-0.png",GL_REPEAT,GL_NEAREST);
 
+	//enable blending 
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	
 	
 
 	glBindVertexArray(quadVAO);
@@ -84,6 +85,7 @@ int main() {
 		glClearColor(0.3f, 0.4f, 0.9f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		//Set uniforms
 		//backround shader
 		shader.use();

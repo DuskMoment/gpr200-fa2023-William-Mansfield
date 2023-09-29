@@ -9,9 +9,11 @@ void main(){
 
 	
 	float time = _Time;
-	
+	vec4 color = texture(_FaceTexture,UV);
 
-	FragColor = texture(_FaceTexture,UV);
+	color = mix(color,vec4(color.r,color.g,color.b,0.0),sin(time));
+
+	FragColor = color;
 
 
 }

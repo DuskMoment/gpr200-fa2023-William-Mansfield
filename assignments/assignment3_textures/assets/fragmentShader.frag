@@ -12,13 +12,15 @@ void main(){
 
 	
 	float time = _Time;
-	
-	float noise = texture(_NoiseTexture,UV).r;
-	vec2 uv = UV + noise * (sin(time) * 0.1f);
-	vec4 colorA = texture(_BrickTexture,uv);
-	vec4 colorB = texture(_SmileTexture,uv);
+	vec2 uv = UV;
+
+	float noise = texture(_NoiseTexture,uv+time*0.5f).r;
+	uv = UV + noise * 0.1f;
+
+	vec4 brickColor = texture(_BrickTexture,uv);
+	vec4 smileColor = texture(_SmileTexture,uv);
 	//this is what puts the textures together
-	vec3 color = mix(colorA.rgb,colorB.rgb,colorB.a);
+	vec3 color = mix(brickColor.rgb,smileColor.rgb,smileColor.a);
 
 	FragColor = vec4(color,1.0);
 

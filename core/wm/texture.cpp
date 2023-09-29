@@ -4,7 +4,8 @@
 #include "../ew/external/glad.h"
 
 
-
+namespace wm
+{
 	unsigned int loadTexture(const char* filePath, int wrapMode, int filterMode)
 	{
 
@@ -28,10 +29,15 @@
 		switch (numComponents)
 		{
 		case 1: format = GL_RED;
+			break;
 		case 2: format = GL_RG;
+			break;
 		case 3: format = GL_RGB;
+			break;
 		case 4: format = GL_RGBA;
+			break;
 		default: format = GL_RGBA;
+			break;
 		}
 		//ask for this 
 		glTexImage2D(GL_TEXTURE_2D, 0, format, width, hight, 0, format, GL_UNSIGNED_BYTE, data);
@@ -51,6 +57,9 @@
 
 		return texture;
 	}
+
+}
+	
 
 
 
