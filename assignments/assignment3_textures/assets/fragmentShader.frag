@@ -5,7 +5,7 @@ in vec2 UV;
 
 uniform sampler2D _NoiseTexture;
 uniform sampler2D _BrickTexture;
-uniform sampler2D _DonkeyTexture;
+uniform sampler2D _SmileTexture;
 uniform float _Time;
 
 void main(){
@@ -16,7 +16,7 @@ void main(){
 	float noise = texture(_NoiseTexture,UV).r;
 	vec2 uv = UV + noise * (sin(time) * 0.1f);
 	vec4 colorA = texture(_BrickTexture,uv);
-	vec4 colorB = texture(_DonkeyTexture,uv);
+	vec4 colorB = texture(_SmileTexture,uv);
 	//this is what puts the textures together
 	vec3 color = mix(colorA.rgb,colorB.rgb,colorB.a);
 

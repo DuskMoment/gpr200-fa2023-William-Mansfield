@@ -63,26 +63,18 @@ int main() {
 
 	// changed from ew to wm namespace
 	wm::Shader shader("assets/vertexShader.vert", "assets/fragmentShader.frag");
+	wm::Shader charShader("assets/charShader.vert", "assets/charShader.frag");
 
 	unsigned int quadVAO = createVAO(vertices, 4, indices, 6);
 
 	// do i need to give its own namespace?
-	unsigned int noiseTexture = loadTexture("assets/nosieMap.png", GL_REPEAT, GL_LINEAR);
+	unsigned int noiseTexture = loadTexture("assets/Voronoi 6 - 128x128.png", GL_REPEAT, GL_LINEAR);
 	unsigned int brickTexture = loadTexture("assets/bricks-bzc.png", GL_REPEAT, GL_LINEAR);
-	unsigned int donkeyTexture = loadTexture("assets/109381-funny-donkey-download-free-image.png", GL_REPEAT, GL_BUFFER);
+	unsigned int smileTexture = loadTexture("assets/109381-funny-donkey-download-free-image.png", GL_REPEAT, GL_LINEAR);
+	unsigned int faceTexture = loadTexture("assets/pixil-frame-0.png",GL_REPEAT,GL_NEAREST);
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, brickTexture);
-
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, donkeyTexture);
-
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, noiseTexture);
-
-	
-	// created birck wall!!!!!!!
-	
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	
 
 	glBindVertexArray(quadVAO);
@@ -93,11 +85,20 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		//Set uniforms
-
+		//backround shader
 		shader.use();
 
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, brickTexture);
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, smileTexture);
+
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, noiseTexture);
+
 		shader.setInt("_BrickTexture", 0);
-		shader.setInt("_DonkeyTexture", 1);
+		shader.setInt("_SmileTexture", 1);
 		shader.setInt("_NoiseTexture", 2);
 
 		shader.setFloat("_Time", (float)glfwGetTime());
@@ -105,6 +106,16 @@ int main() {
 
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, NULL);
 
+		//charachter
+		charShader.use();
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, faceTexture);
+
+		charShader.setInt("_FaceTexture", 0);
+		charShader.setFloat("_Time", (float)glfwGetTime());
+
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, NULL);
 		//Render UI
 		{
 			ImGui_ImplGlfw_NewFrame();

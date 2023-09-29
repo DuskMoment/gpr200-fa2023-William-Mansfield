@@ -24,13 +24,14 @@
 		glGenTextures(1, &texture);
 		glBindTexture(GL_TEXTURE_2D, texture);
 
-		unsigned int format = GL_RGBA;
+		unsigned int format;
 		switch (numComponents)
 		{
 		case 1: format = GL_RED;
 		case 2: format = GL_RG;
 		case 3: format = GL_RGB;
 		case 4: format = GL_RGBA;
+		default: format = GL_RGBA;
 		}
 		//ask for this 
 		glTexImage2D(GL_TEXTURE_2D, 0, format, width, hight, 0, format, GL_UNSIGNED_BYTE, data);
