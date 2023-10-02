@@ -6,7 +6,7 @@
 
 namespace wm
 {
-	unsigned int loadTexture(const char* filePath, int wrapMode, int filterMode)
+	unsigned int loadTexture(const char* filePath, int wrapMode, int minFilterMode, int maxFiliterMode)
 	{
 
 		stbi_set_flip_vertically_on_load(true);
@@ -45,9 +45,9 @@ namespace wm
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMode);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMode);
 		//min filter
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, wrapMode);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilterMode);
 		//mag filter
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, wrapMode);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxFiliterMode);
 
 		glGenerateMipmap(GL_TEXTURE_2D);
 

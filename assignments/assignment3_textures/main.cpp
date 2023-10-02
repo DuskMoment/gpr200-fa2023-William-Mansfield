@@ -68,10 +68,10 @@ int main() {
 	unsigned int quadVAO = createVAO(vertices, 4, indices, 6);
 
 	//load textures
-	unsigned int noiseTexture = wm::loadTexture("assets/waterNosieMap.jpg", GL_REPEAT, GL_LINEAR);
-	unsigned int brickTexture = wm::loadTexture("assets/Brick-wallaper-For-Background-33.jpg", GL_REPEAT, GL_LINEAR);
-	unsigned int smileTexture = wm::loadTexture("assets/smiley.png", GL_REPEAT, GL_LINEAR);
-	unsigned int faceTexture = wm::loadTexture("assets/pixil-frame-0.png",GL_REPEAT,GL_NEAREST);
+	unsigned int noiseTexture = wm::loadTexture("assets/waterNosieMap.jpg", GL_REPEAT, GL_LINEAR, GL_LINEAR);
+	unsigned int brickTexture = wm::loadTexture("assets/Brick-wallaper-For-Background-33.jpg", GL_REPEAT, GL_LINEAR,GL_LINEAR);
+	unsigned int smileTexture = wm::loadTexture("assets/smiley.png", GL_REPEAT, GL_LINEAR, GL_LINEAR);
+	unsigned int faceTexture = wm::loadTexture("assets/pixil-frame-0.png",GL_REPEAT,GL_NEAREST, GL_NEAREST);
 
 	//enable blending 
 	glEnable(GL_BLEND);
