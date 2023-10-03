@@ -62,20 +62,20 @@ int main() {
 	ImGui_ImplOpenGL3_Init();
 
 	// changed from ew to wm namespace
-	wm::Shader shader("assets/vertexShader.vert", "assets/fragmentShader.frag");
+	wm::Shader backRoundShader("assets/vertexShader.vert", "assets/fragmentShader.frag");
 	wm::Shader charShader("assets/charShader.vert", "assets/charShader.frag");
 
 	unsigned int quadVAO = createVAO(vertices, 4, indices, 6);
 
 	//load textures
 	unsigned int noiseTexture = wm::loadTexture("assets/waterNosieMap.jpg", GL_REPEAT, GL_LINEAR, GL_LINEAR);
-	unsigned int brickTexture = wm::loadTexture("assets/Brick-wallaper-For-Background-33.jpg", GL_REPEAT, GL_LINEAR,GL_LINEAR);
+	unsigned int brickTexture = wm::loadTexture("assets/Brick-wallaper-For-Background-33.jpg", GL_REPEAT, GL_LINEAR, GL_LINEAR);
 	unsigned int smileTexture = wm::loadTexture("assets/smiley.png", GL_REPEAT, GL_LINEAR, GL_LINEAR);
 	unsigned int faceTexture = wm::loadTexture("assets/pixil-frame-0.png",GL_REPEAT,GL_NEAREST, GL_NEAREST);
 
 	//enable blending 
 	glEnable(GL_BLEND);
-	
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	
 
 	glBindVertexArray(quadVAO);
@@ -85,10 +85,10 @@ int main() {
 		glClearColor(0.3f, 0.4f, 0.9f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		
 		//Set uniforms
 		//backround shader
-		shader.use();
+		backRoundShader.use();
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, brickTexture);
@@ -99,11 +99,11 @@ int main() {
 		glActiveTexture(GL_TEXTURE2);
 		glBindTexture(GL_TEXTURE_2D, noiseTexture);
 
-		shader.setInt("_BrickTexture", 0);
-		shader.setInt("_SmileTexture", 1);
-		shader.setInt("_NoiseTexture", 2);
+		backRoundShader.setInt("_BrickTexture", 0);
+		backRoundShader.setInt("_SmileTexture", 1);
+		backRoundShader.setInt("_NoiseTexture", 2);
 
-		shader.setFloat("_Time", (float)glfwGetTime());
+		backRoundShader.setFloat("_Time", (float)glfwGetTime());
 
 
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, NULL);
