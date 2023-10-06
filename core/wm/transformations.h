@@ -71,7 +71,7 @@ namespace wm
 		ew::Vec3 scale = ew::Vec3(1.0f, 1.0f, 1.0f);
 		ew::Mat4 getModelMatrix() const
 		{
-			return Identity() * Translate(position) * (RotateY(rotation.y) * RotateX(rotation.x) *
+			return Translate(position) * (RotateY(rotation.y) * RotateX(rotation.x) *
 				RotateZ(rotation.z)) * Sacle(scale);
 		}
 	};

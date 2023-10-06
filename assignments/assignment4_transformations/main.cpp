@@ -13,6 +13,7 @@
 #include <ew/procGen.h>
 
 #include <wm/transformations.h>
+#include <wm/shader.h>;
 
 void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 
@@ -65,7 +66,7 @@ int main() {
 	//Depth testing - required for depth sorting!
 	glEnable(GL_DEPTH_TEST);
 
-	ew::Shader shader("assets/vertexShader.vert", "assets/fragmentShader.frag");
+	wm::Shader shader("assets/vertexShader.vert", "assets/fragmentShader.frag");
 	
 	//Cube mesh
 	ew::Mesh cubeMesh(ew::createCube(0.5f));
@@ -80,14 +81,12 @@ int main() {
 		shader.use();
 		
 		//TODO: Set model matrix uniform
-		shader.setMat4("_Model", cubeTransfromArray[0].getModelMatrix());
-		cubeMesh.draw();
-		shader.setMat4("_Model", cubeTransfromArray[1].getModelMatrix());
-		cubeMesh.draw();
-		shader.setMat4("_Model", cubeTransfromArray[2].getModelMatrix());
-		cubeMesh.draw();
-		shader.setMat4("_Model", cubeTransfromArray[3].getModelMatrix());
-		cubeMesh.draw();
+		
+		for (int i = 0; i < NUM_CUBES; i++)
+		{
+			shader.setMat4("_Model", cubeTransfromArray[i].getModelMatrix());
+			cubeMesh.draw();
+		}
 
 
 		//Render UI
