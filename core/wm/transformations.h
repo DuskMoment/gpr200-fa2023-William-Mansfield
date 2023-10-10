@@ -12,7 +12,6 @@ namespace wm
 			0, 1, 0, 0,
 			0, 0, 1, 0,
 			0, 0, 0, 1);
-			
 
 	};
 
@@ -68,7 +67,7 @@ namespace wm
 	inline ew::Mat4 LookAt(ew::Vec3 eye, ew::Vec3 target, ew::Vec3 up)
 	{
 		//get a vector to the target on the x axis
-		ew::Vec3 f = ew::Normalize(target-eye);
+		ew::Vec3 f = ew::Normalize(eye-target);
 
 		ew::Vec3 r = ew::Cross(up, f);
 		r = ew::Normalize(r);
@@ -104,7 +103,7 @@ namespace wm
 
 
 	};
-	inline ew::Mat4 Prospective(float fov, float aspect, float near, float far)
+	inline ew::Mat4 Perspective(float fov, float aspect, float near, float far)
 	{
 		return ew::Mat4(
 			1 / (tan(fov / 2) * aspect), 0, 0, 0,
@@ -122,8 +121,7 @@ namespace wm
 		ew::Vec3 scale = ew::Vec3(1.0f, 1.0f, 1.0f);
 		ew::Mat4 getModelMatrix() const
 		{
-			return Translate(position) * (RotateY(rotation.y) * RotateX(rotation.x) *
-				RotateZ(rotation.z)) * Sacle(scale);
+			return wm::Translate(position) * (RotateY(rotation.y) * RotateX(rotation.x) * RotateZ(rotation.z)) * Sacle(scale);
 		}
 	};
 
