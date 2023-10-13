@@ -1,6 +1,7 @@
 #pragma once
 #include "../ew/ewMath/mat4.h"
 #include "../ew/ewMath/vec3.h"
+#include "../ew/ewMath/ewMath.h"
 
 
 namespace wm
@@ -82,19 +83,18 @@ namespace wm
 			0, 0, 0, 1
 
 		);
-		//veiw transform
 
 		
 	};
 	inline ew::Mat4 Orthographic(float height, float aspect, float near, float far)
 	{
-		float r = aspect / 2;
-		float t = height / 2;
+		float r = (height*aspect) / 2.0;
+		float t = height / 2.0;
 		float l = -r;
 		float b = -t;
 
 		return ew::Mat4(
-			(2 / (r - 1)), 0, 0, -(r + l) / (r - l),
+			(2 / (r - l)), 0, 0, -(r + l) / (r - l),
 			0, 2 / (t - b), 0, -(t + b) / (t - b),
 			0, 0, -2 / (far - near), -(far + near) / (far - near),
 			0, 0, 0, 1
@@ -105,11 +105,12 @@ namespace wm
 	};
 	inline ew::Mat4 Perspective(float fov, float aspect, float near, float far)
 	{
+		fov = ew::Radians(fov);
 		return ew::Mat4(
-			1 / (tan(fov / 2) * aspect), 0, 0, 0,
-			0, 1 / (tan(fov / 2)), 0, 0,
-			0, 0, (near + far) / (near - far), (2 * far * near) / (near - far),
-			0,0,-1,0
+			1.0 /(tan(fov / 2) * aspect), 0.0, 0.0, 0.0,
+			0.0, 1.0 / tan(fov / 2), 0.0, 0.0,
+			0.0, 0.0, (near + far) / (near - far), (2 * far * near) / (near - far),
+			0.0,0.0,-1.0,0.0
 		);
 
 	};

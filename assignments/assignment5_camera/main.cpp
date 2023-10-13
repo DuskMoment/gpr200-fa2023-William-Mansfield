@@ -76,7 +76,8 @@ int main() {
 	camera.orthoSize = 6;
 	camera.nearPlane = 0.1;
 	camera.farPlane = 100;
-	camera.aspectRatio = SCREEN_WIDTH / SCREEN_HEIGHT;
+	camera.aspectRatio = static_cast<float>(SCREEN_WIDTH) / SCREEN_HEIGHT;
+	
 
 
 	while (!glfwWindowShouldClose(window)) {
@@ -139,5 +140,6 @@ int main() {
 void framebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
+	camera.aspectRatio = static_cast<float> (width)/ height;
 }
 
