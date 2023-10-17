@@ -106,9 +106,11 @@ namespace wm
 	inline ew::Mat4 Perspective(float fov, float aspect, float near, float far)
 	{
 		fov = ew::Radians(fov);
+		float fovTan = tan(fov / 2);
+
 		return ew::Mat4(
-			1.0 /(tan(fov / 2) * aspect), 0.0, 0.0, 0.0,
-			0.0, 1.0 / tan(fov / 2), 0.0, 0.0,
+			1.0 /(fovTan * aspect), 0.0, 0.0, 0.0,
+			0.0, 1.0 / fovTan, 0.0, 0.0,
 			0.0, 0.0, (near + far) / (near - far), (2 * far * near) / (near - far),
 			0.0,0.0,-1.0,0.0
 		);

@@ -14,6 +14,7 @@
 
 #include <wm/camera.h>
 #include <wm/transformations.h>
+#include <wm/shader.h>
 
 void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 
@@ -22,8 +23,10 @@ const int SCREEN_WIDTH = 1080;
 const int SCREEN_HEIGHT = 720;
 
 const int NUM_CUBES = 4;
-ew::Transform cubeTransforms[NUM_CUBES];
+wm::Transform cubeTransforms[NUM_CUBES];
 wm::Camera camera;
+bool orbit;
+float speed = 0.01;
 
 int main() {
 	printf("Initializing...");
@@ -58,7 +61,7 @@ int main() {
 	//Depth testing - required for depth sorting!
 	glEnable(GL_DEPTH_TEST);
 
-	ew::Shader shader("assets/vertexShader.vert", "assets/fragmentShader.frag");
+	wm::Shader shader("assets/vertexShader.vert", "assets/fragmentShader.frag");
 	
 	//Cube mesh
 	ew::Mesh cubeMesh(ew::createCube(0.5f));
@@ -117,6 +120,16 @@ int main() {
 				ImGui::PopID();
 			}
 			ImGui::Text("Camera");
+			ImGui::SliderFloat("orbitSpeed", &speed, 0.001, 0.09);
+			ImGui::Checkbox("Orbit", &orbit);
+			if (orbit)
+			{
+				float time = (float)glfwGetTime();
+				ew::Vec3 nextPos = ew::Normalize(ew::Cross(ew::Vec3(0, 1, 0),camera.position));
+				//why does this work
+				camera.position += nextPos * speed;
+				
+			}
 			ImGui::DragFloat3("Position", &camera.position.x, 0.01f);
 			ImGui::DragFloat3("Target", &camera.target.x, 0.01f);
 			ImGui::DragFloat("FOV", &camera.fov, 0.01f);
