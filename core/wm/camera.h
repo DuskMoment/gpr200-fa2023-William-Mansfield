@@ -34,4 +34,13 @@ namespace wm
 
 
 	};
+	struct CameraControls
+	{
+		double prevMouseX, prevMouseY;
+		float yaw = 0;
+		float pitch = 0;
+		float mouseSensitivity = 0.1f;
+		bool firstMouse = true;
+		float moveSpeed = 5.0f;
+	};
 }
