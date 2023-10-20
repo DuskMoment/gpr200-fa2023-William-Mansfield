@@ -28,7 +28,7 @@ const int NUM_CUBES = 4;
 wm::Transform cubeTransforms[NUM_CUBES];
 wm::Camera camera;
 wm::CameraControls controls;
-bool orbit;
+//bool orbit;
 float speed = 0.01;
 
 
@@ -127,23 +127,25 @@ int main() {
 				ImGui::PopID();
 			}
 			ImGui::Text("Camera");
-			ImGui::SliderFloat("orbitSpeed", &speed, 0.001, 0.09);
-			ImGui::Checkbox("Orbit", &orbit);
-			if (orbit)
-			{
-				
-				ew::Vec3 nextPos = ew::Normalize(ew::Cross(ew::Vec3(0, 1, 0),camera.position));
-				//why does this work
-				camera.position += nextPos * speed;
-				
-			}
+			//ImGui::SliderFloat("orbitSpeed", &speed, 0.001, 0.09);
+			//ImGui::Checkbox("Orbit", &orbit);
+			//if (orbit)
+			//{
+			//	
+			//	ew::Vec3 nextPos = ew::Normalize(ew::Cross(ew::Vec3(0, 1, 0),camera.position));
+			//	//why does this work
+			//	camera.position += nextPos * speed;
+			//	
+			//}
 			ImGui::DragFloat3("Position", &camera.position.x, 0.01f);
 			ImGui::DragFloat3("Target", &camera.target.x, 0.01f);
 			ImGui::DragFloat("FOV", &camera.fov, 0.01f);
-			ImGui::Checkbox("Orthogramphic", &camera.orthographic);
+			ImGui::Checkbox("Orthographic", &camera.orthographic);
 			ImGui::DragFloat("Orhto hight", &camera.orthoSize, 0.01f);
 			ImGui::DragFloat("Near Plane", &camera.nearPlane, 0.01f);
 			ImGui::DragFloat("Far Plane", &camera.farPlane, 0.01f);
+			ImGui::Text("fly camera");
+			ImGui::DragFloat("Speed", &controls.moveSpeed, 0.1f);
 			ImGui::Text("Pitch = %f", controls.pitch);
 			ImGui::Text("Yaw = %f", controls.yaw);
 			if (ImGui::Button("reset"))
@@ -193,6 +195,8 @@ void moveCamera(GLFWwindow* window, wm::Camera* camera, wm::CameraControls* cont
 		controls->prevMouseX = mouseX;
 		controls->prevMouseY = mouseY;
 	}
+
+
 	//gets delta and add to yaw and pitch
 	controls->yaw += (mouseX - controls->prevMouseX) * controls->mouseSensitivity;
 	controls->pitch -= (mouseY - controls->prevMouseY) * controls->mouseSensitivity;
@@ -212,7 +216,8 @@ void moveCamera(GLFWwindow* window, wm::Camera* camera, wm::CameraControls* cont
 	float radYaw = ew::Radians(controls->yaw);
 	float radPitch= ew::Radians(controls-> pitch);
 
-	ew::Vec3 forward = ew::Vec3((cos(radYaw) * cos(radPitch)), sin(radPitch), (sin(radYaw) * cos(radPitch)));
+	//create our forward
+	ew::Vec3 forward = ew::Vec3((sin(radYaw) * cos(radPitch)), sin(radPitch), (-cos(radYaw) * cos(radPitch)));
 	camera->target = camera->position + forward;
 
 	//keyboard movment
