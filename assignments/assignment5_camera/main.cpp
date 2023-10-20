@@ -162,7 +162,10 @@ int main() {
 				controls.yaw = 0;
 				camera.position = ew::Vec3(0, 0, 5);
 				camera.target = ew::Vec3(0, 0, 0);
-				
+				camera.fov = 60;
+				camera.orthoSize = 6;
+				camera.nearPlane = 0.1;
+				camera.farPlane = 100;
 			}
 	
 		
