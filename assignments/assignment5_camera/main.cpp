@@ -139,9 +139,17 @@ int main() {
 			//}
 			ImGui::DragFloat3("Position", &camera.position.x, 0.01f);
 			ImGui::DragFloat3("Target", &camera.target.x, 0.01f);
-			ImGui::DragFloat("FOV", &camera.fov, 0.01f);
+			
 			ImGui::Checkbox("Orthographic", &camera.orthographic);
-			ImGui::DragFloat("Orhto hight", &camera.orthoSize, 0.01f);
+			if (camera.orthographic)
+			{
+				ImGui::DragFloat("Orhto hight", &camera.orthoSize, 0.01f);
+			}
+			else
+			{
+				ImGui::DragFloat("FOV", &camera.fov, 0.01f);
+			}
+		
 			ImGui::DragFloat("Near Plane", &camera.nearPlane, 0.01f);
 			ImGui::DragFloat("Far Plane", &camera.farPlane, 0.01f);
 			ImGui::Text("fly camera");
