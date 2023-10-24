@@ -17,7 +17,7 @@ namespace wm
 		float orthoSize;
 		ew::Mat4 VeiwMatrix()
 		{
-			return LookAt(position, target, ew::Vec3(0, 1.0, 0));
+			return wm::LookAt(position, target, ew::Vec3(0, 1.0, 0));
 		};
 		ew::Mat4 ProjectionMarix()
 		{
