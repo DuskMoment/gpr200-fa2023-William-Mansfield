@@ -14,6 +14,7 @@
 #include <ew/transform.h>
 #include <ew/camera.h>
 #include <ew/cameraController.h>
+#include <wm/procGen.h>
 
 void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 void resetCamera(ew::Camera& camera, ew::CameraController& cameraController);
@@ -85,6 +86,14 @@ int main() {
 	//Initialize transforms
 	ew::Transform cubeTransform;
 
+	//create plane - ask if i am using the size correcly
+	ew::Mesh planeMeshData = wm::createPlane(4, 2);
+
+	ew::Mesh planeMesh(planeMeshData);
+	ew::Transform planeTransfrom;
+	planeTransfrom.position = ew::Vec3(1.0f, 0.0f, 0.0f);
+
+
 	resetCamera(camera,cameraController);
 
 	while (!glfwWindowShouldClose(window)) {
@@ -112,6 +121,7 @@ int main() {
 		shader.setVec3("_Color", appSettings.shapeColor);
 		shader.setMat4("_ViewProjection", camera.ProjectionMatrix() * camera.ViewMatrix());
 
+
 		//Euler angels to forward vector
 		ew::Vec3 lightRot = appSettings.lightRotation * ew::DEG2RAD;
 		ew::Vec3 lightF = ew::Vec3(sinf(lightRot.y) * cosf(lightRot.x), sinf(lightRot.x), -cosf(lightRot.y) * cosf(lightRot.x));
@@ -120,6 +130,10 @@ int main() {
 		//Draw cube
 		shader.setMat4("_Model", cubeTransform.getModelMatrix());
 		cubeMesh.draw((ew::DrawMode)appSettings.drawAsPoints);
+
+		//Draw plane
+		shader.setMat4("_Model", planeTransfrom.getModelMatrix());
+		planeMesh.draw((ew::DrawMode)appSettings.drawAsPoints);
 
 		//Render UI
 		{

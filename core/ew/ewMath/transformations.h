@@ -66,7 +66,7 @@ namespace ew {
 			0.0f, 0.0f, 1.0f, t.z,
 			0.0f, 0.0f, 0.0f, 1.0f
 		);
-		);
+	
 	};
 
 	inline ew::Mat4 LookAt(const ew::Vec3& eyePos, const ew::Vec3& targetPos, const ew::Vec3& up) {

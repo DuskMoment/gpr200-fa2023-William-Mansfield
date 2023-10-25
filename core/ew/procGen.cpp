@@ -5,6 +5,7 @@
 
 #include "procGen.h"
 #include <stdlib.h>
+#include "procGen.h"
 
 namespace ew {
 	/// <summary>
