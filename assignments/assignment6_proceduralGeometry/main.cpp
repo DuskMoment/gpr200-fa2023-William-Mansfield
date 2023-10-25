@@ -87,7 +87,7 @@ int main() {
 	ew::Transform cubeTransform;
 
 	//create plane - ask if i am using the size correcly
-	ew::MeshData planeMeshData = wm::createPlane(1, 2);
+	ew::MeshData planeMeshData = wm::createPlane(1, 10);
 
 	ew::Mesh planeMesh(planeMeshData);
 	ew::Transform planeTransfrom;

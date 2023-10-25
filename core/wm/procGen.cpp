@@ -49,7 +49,8 @@ namespace wm
 		return plane;
 	};
 
-	ew::MeshData createCylinder(float height, float raidus, int numSegemnts)
+
+	ew::MeshData createCylinder(float height, float radius, int numSegemnts)
 	{
 		ew::MeshData cylinder;
 		float topY = height/2.0; // y = 0 centered
@@ -57,59 +58,43 @@ namespace wm
 		//top center
 		ew::Vertex top;
 		top.pos = ew::Vec3(0, topY, 0);
+		top.normal = ew::Vec3(0, 1, 0);
 		cylinder.vertices.push_back(top);
 
 		//top ring 
-		float thetaStep = ew::TAU/numSegemnts;
-		for (int i = 0; i <= numSegemnts; i++)
-		{
-			float theta = i * thetaStep;
-			ew::Vertex vertex;
-			vertex.pos.x = cos(theta) * raidus;
-			vertex.pos.y = topY;
-			vertex.pos.z = sin(theta) * raidus;
-			//normals
-			ew::Vec3 normal = ew::Vec3(0 - vertex.pos.x, topY - vertex.pos.y, 0 - vertex.pos.z);
+		createCylinderVertices(topY, cylinder, radius, numSegemnts,false);
+		//second ring
 
-			vertex.normal = ew::Normalize(normal);
-
-			cylinder.vertices.push_back(vertex);
-		}
 		//bottom ring
-		for (int i = 0; i <= numSegemnts; i++)
-		{
-			float theta = i * thetaStep;
-			ew::Vertex vertex;
-			vertex.pos.x = (cos(theta) * raidus);
-			vertex.pos.y = bottomY;
-			vertex.pos.z = (sin(theta) * raidus);
-			//normals
-			ew::Vec3 normal = ew::Vec3(0 - vertex.pos.x, bottomY - vertex.pos.y,
-				0 - vertex.pos.z );
+		createCylinderVertices(bottomY, cylinder, radius, numSegemnts,false);
+		
+		//second top ring
+		createCylinderVertices(topY, cylinder, radius, numSegemnts, true);
 
-			vertex.normal = ew::Normalize(normal);
+		//second borrom ring
+		createCylinderVertices(bottomY, cylinder, radius, numSegemnts, true);
 
-			cylinder.vertices.push_back(vertex);
-		}
 		//bottom center
 		ew::Vertex bottom;
 		bottom.pos = ew::Vec3(0, bottomY, 0);
+		bottom.normal = ew::Vec3(0, -1, 0);
 		cylinder.vertices.push_back(bottom);
 
 		//cylinder cap
-		int start = 1;
+		//why doe these numbers work????
+		
+		int start = (numSegemnts * 2)+3;
 		int center = 0;
-		int count = 0;
 		for (int i = 0; i < numSegemnts; i++)
 		{
 			cylinder.indices.push_back(start + i);
 			cylinder.indices.push_back(center);
 			cylinder.indices.push_back(start + i + 1);
-			count++;
+			
 		}
 		//bottom indecies 
-		//why is this plus 2?
-		start = count+2;
+		//why do these numbers work?????
+		start = (numSegemnts*3)+4;
 		center = cylinder.vertices.size()-1;
 		for (int i = 0; i < numSegemnts; i++)
 		{
@@ -118,7 +103,7 @@ namespace wm
 			cylinder.indices.push_back(start + i);
 	
 		}
-		//side indices
+		////side indices
 		int sideStart = 1;
 		int columbs = numSegemnts + 1;
 		for (int i = 0; i < columbs; i++)
@@ -138,4 +123,40 @@ namespace wm
 		return cylinder;
 
 	};
+
+	void createCylinderVertices(float yPos, ew::MeshData& mesh, float radius, int numSegemnts, bool isHardEdge)
+	{
+		float thetaStep = ew::TAU / numSegemnts;
+		for (int i = 0; i <= numSegemnts; i++)
+		{
+			float theta = i * thetaStep;
+			ew::Vertex vertex;
+
+			//vertexOne
+			vertex.pos.x = cos(theta) * radius;
+			vertex.pos.y = yPos;
+			vertex.pos.z = sin(theta) * radius;
+
+
+			//normals vertex one
+			if (isHardEdge)
+			{
+				ew::Vec3 normal = ew::Vec3(0,1,0);
+				vertex.normal = ew::Normalize(normal);
+			}
+			else
+			{
+				ew::Vec3 normal = ew::Vec3(0 - vertex.pos.x, yPos - vertex.pos.y,
+					0 - vertex.pos.z);
+				vertex.normal = ew::Normalize(normal);
+			}
+			
+
+			mesh.vertices.push_back(vertex);
+
+		}
+
+	};
+	
+	
 }
