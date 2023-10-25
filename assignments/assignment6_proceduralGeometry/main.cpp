@@ -87,11 +87,18 @@ int main() {
 	ew::Transform cubeTransform;
 
 	//create plane - ask if i am using the size correcly
-	ew::Mesh planeMeshData = wm::createPlane(4, 2);
+	ew::MeshData planeMeshData = wm::createPlane(1, 2);
 
 	ew::Mesh planeMesh(planeMeshData);
 	ew::Transform planeTransfrom;
 	planeTransfrom.position = ew::Vec3(1.0f, 0.0f, 0.0f);
+
+	//create cylinder
+	ew::MeshData cylinderMeshData = wm::createCylinder(1.0,0.5, 20);
+
+	ew::Mesh cylinderMesh(cylinderMeshData);
+	ew::Transform cylinderTransfrom;
+	cylinderTransfrom.position = ew::Vec3(-1.5f, -0.0f, -0.0f);
 
 
 	resetCamera(camera,cameraController);
@@ -134,6 +141,10 @@ int main() {
 		//Draw plane
 		shader.setMat4("_Model", planeTransfrom.getModelMatrix());
 		planeMesh.draw((ew::DrawMode)appSettings.drawAsPoints);
+
+		//draw cylinder
+		shader.setMat4("_Model", cylinderTransfrom.getModelMatrix());
+		cylinderMesh.draw((ew::DrawMode)appSettings.drawAsPoints);
 
 		//Render UI
 		{
