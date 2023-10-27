@@ -94,11 +94,18 @@ int main() {
 	planeTransfrom.position = ew::Vec3(1.0f, 0.0f, 0.0f);
 
 	//create cylinder
-	ew::MeshData cylinderMeshData = wm::createCylinder(1.0,0.5, 20);
+	ew::MeshData cylinderMeshData = wm::createCylinder(1.0,0.3, 50);
 
 	ew::Mesh cylinderMesh(cylinderMeshData);
 	ew::Transform cylinderTransfrom;
 	cylinderTransfrom.position = ew::Vec3(-1.5f, -0.0f, -0.0f);
+
+	//create sphere 
+	ew::MeshData sphereMeshData = wm::createSphere(0.5, 40);
+
+	ew::Mesh sphereMesh(sphereMeshData);
+	ew::Transform sphereTansfrom;
+	sphereTansfrom.position = ew::Vec3(-3.5f, -0.0f, -0.0f);
 
 
 	resetCamera(camera,cameraController);
@@ -145,6 +152,10 @@ int main() {
 		//draw cylinder
 		shader.setMat4("_Model", cylinderTransfrom.getModelMatrix());
 		cylinderMesh.draw((ew::DrawMode)appSettings.drawAsPoints);
+
+		//Draw sphere
+		shader.setMat4("_Model", sphereTansfrom.getModelMatrix());
+		sphereMesh.draw((ew::DrawMode)appSettings.drawAsPoints);
 
 		//Render UI
 		{

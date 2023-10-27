@@ -6,7 +6,7 @@ namespace wm
 	{
 		ew::MeshData plane;
 		float width = size;
-		float height = size/width;
+		float height = size;
 		//vertex
 		for (int row = 0; row <= subdivisions; row++)
 		{
@@ -59,6 +59,7 @@ namespace wm
 		ew::Vertex top;
 		top.pos = ew::Vec3(0, topY, 0);
 		top.normal = ew::Vec3(0, 1, 0);
+		top.uv = ew::Vec2(0.5, 0.5);
 		cylinder.vertices.push_back(top);
 
 		//top ring 
@@ -78,6 +79,7 @@ namespace wm
 		ew::Vertex bottom;
 		bottom.pos = ew::Vec3(0, bottomY, 0);
 		bottom.normal = ew::Vec3(0, -1, 0);
+		bottom.uv = ew::Vec2(0.5, 0.5);
 		cylinder.vertices.push_back(bottom);
 
 		//cylinder cap
@@ -124,7 +126,7 @@ namespace wm
 
 	};
 
-	void createCylinderVertices(float yPos, ew::MeshData& mesh, float radius, int numSegemnts, bool isHardEdge)
+	void createCylinderVertices(float yPos, ew::MeshData& mesh, float radius, int numSegemnts, bool isTop)
 	{
 		float thetaStep = ew::TAU / numSegemnts;
 		for (int i = 0; i <= numSegemnts; i++)
@@ -139,16 +141,31 @@ namespace wm
 
 
 			//normals vertex one
-			if (isHardEdge)
+			if (isTop)
 			{
 				ew::Vec3 normal = ew::Vec3(0,1,0);
 				vertex.normal = ew::Normalize(normal);
+				ew::Vec2  uv = ew::Vec2(cos(theta), sin(theta));
+				uv = (uv+1)/ 2.0 ;
+				vertex.uv = uv;
 			}
 			else
 			{
 				ew::Vec3 normal = ew::Vec3(0 - vertex.pos.x, yPos - vertex.pos.y,
 					0 - vertex.pos.z);
 				vertex.normal = ew::Normalize(normal);
+				if (yPos < 0)
+				{
+					vertex.uv.y = 0.0;
+				}
+				else
+				{
+					vertex.uv.y = 1.0;
+				}
+
+				vertex.uv.x = static_cast<float>(i)/numSegemnts;
+				
+				
 			}
 			
 
@@ -156,6 +173,71 @@ namespace wm
 
 		}
 
+	};
+	ew::MeshData createSphere(float radius, int numSegments)
+	{
+		ew::MeshData sphere;
+		float thetaStep = ew::TAU / numSegments;
+		float phiSteps = ew::PI / numSegments;
+		ew::Vertex vertex;
+		//vertices
+		for (int row = 0; row <= numSegments; row++)
+		{
+			float phi = row * phiSteps;
+
+			for (int col = 0; col <= numSegments; col++)
+			{
+				float theta = col * thetaStep;
+				vertex.pos.x = radius * sin(phi) * sin(theta);
+				vertex.pos.y = radius * cos(phi);
+				vertex.pos.z = radius * sin(phi) * cos(theta);
+
+				vertex.normal = ew::Normalize(vertex.pos);
+
+				sphere.vertices.push_back(vertex);
+				
+			}
+		}
+		//indices
+		//top cap
+		int poleStart = 0;
+		int sideStart = numSegments + 1;
+		for (size_t i = 0; i < numSegments; i++)
+		{
+			sphere.indices.push_back(sideStart + i);
+			sphere.indices.push_back(sideStart + i + 1);
+			sphere.indices.push_back(poleStart + i);
+		}
+
+		
+		int columbs = numSegments + 1;
+		for (int row = 1; row < numSegments - 1; row++)
+		{
+			for (int col = 0; col < numSegments; col++)
+			{
+				int start = row * columbs + col;
+				//triangle one
+				sphere.indices.push_back(start);
+				sphere.indices.push_back(start + columbs);
+				sphere.indices.push_back(start + 1);
+				
+				//triangle two
+				sphere.indices.push_back(start + columbs + 1);
+				sphere.indices.push_back(start + 1);
+				sphere.indices.push_back(start + columbs);
+				
+			}
+		}
+		//bottom
+		poleStart = sphere.vertices.size()-numSegments;
+		sideStart = poleStart - numSegments - 2 ;
+		for (size_t i = 0; i < numSegments; i++)
+		{
+			sphere.indices.push_back(sideStart + i);
+			sphere.indices.push_back(poleStart + i);
+			sphere.indices.push_back(sideStart + i + 1);
+		}
+		return sphere;
 	};
 	
 	

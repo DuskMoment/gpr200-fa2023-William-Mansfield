@@ -9,6 +9,6 @@ namespace wm
 
 	ew::MeshData createPlane(float size, int subdivisions);
 
-	void createCylinderVertices(float yPos, ew::MeshData& mesh, float radius, int numSegemnts, bool isHardEdge);
+	void createCylinderVertices(float yPos, ew::MeshData& mesh, float radius, int numSegemnts, bool isTop);
 
 }
