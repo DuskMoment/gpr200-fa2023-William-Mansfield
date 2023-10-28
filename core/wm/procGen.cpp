@@ -194,6 +194,8 @@ namespace wm
 
 				vertex.normal = ew::Normalize(vertex.pos);
 
+				vertex.uv = ew::Vec2(col / static_cast<float>(numSegments), row / static_cast<float>(numSegments));
+				//vertex.uv = (vertex.uv + 1) / 2.0;
 				sphere.vertices.push_back(vertex);
 				
 			}

@@ -94,14 +94,14 @@ int main() {
 	planeTransfrom.position = ew::Vec3(1.0f, 0.0f, 0.0f);
 
 	//create cylinder
-	ew::MeshData cylinderMeshData = wm::createCylinder(1.0,0.3, 50);
+	ew::MeshData cylinderMeshData = wm::createCylinder(1.0,0.3, 3);
 
 	ew::Mesh cylinderMesh(cylinderMeshData);
 	ew::Transform cylinderTransfrom;
 	cylinderTransfrom.position = ew::Vec3(-1.5f, -0.0f, -0.0f);
 
 	//create sphere 
-	ew::MeshData sphereMeshData = wm::createSphere(0.5, 40);
+	ew::MeshData sphereMeshData = wm::createSphere(0.5, 10);
 
 	ew::Mesh sphereMesh(sphereMeshData);
 	ew::Transform sphereTansfrom;
