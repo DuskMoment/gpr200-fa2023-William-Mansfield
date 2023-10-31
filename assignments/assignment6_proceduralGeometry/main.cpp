@@ -89,24 +89,33 @@ int main() {
 	//create plane - ask if i am using the size correcly
 	ew::MeshData planeMeshData = wm::createPlane(1, 10);
 
-	ew::Mesh planeMesh(planeMeshData);
+	ew::Mesh* planeMesh = new ew::Mesh(planeMeshData);
 	ew::Transform planeTransfrom;
 	planeTransfrom.position = ew::Vec3(1.0f, 0.0f, 0.0f);
 
-	//create cylinder
-	ew::MeshData cylinderMeshData = wm::createCylinder(1.0,0.3, 3);
+	float planeSize = 1;
+	int planeSubdivision = 10;
 
-	ew::Mesh cylinderMesh(cylinderMeshData);
+	//create cylinder
+	ew::MeshData cylinderMeshData = wm::createCylinder(0.5,0.3, 16);
+
+	ew::Mesh* cylinderMesh = new ew::Mesh(cylinderMeshData);
 	ew::Transform cylinderTransfrom;
 	cylinderTransfrom.position = ew::Vec3(-1.5f, -0.0f, -0.0f);
 
-	//create sphere 
-	ew::MeshData sphereMeshData = wm::createSphere(0.5, 10);
+	int cylSubdivision = 16;
+	float cylHeight = 0.5;
+	float cylRadius = 0.3;
 
-	ew::Mesh sphereMesh(sphereMeshData);
+	//create sphere 
+	ew::MeshData sphereMeshData = wm::createSphere(0.5, 16);
+
+	ew::Mesh* sphereMesh  = new ew::Mesh(sphereMeshData);
 	ew::Transform sphereTansfrom;
 	sphereTansfrom.position = ew::Vec3(-3.5f, -0.0f, -0.0f);
 
+	int sphrSubdivision = 16;
+	float sphrRadius = 0.5;
 
 	resetCamera(camera,cameraController);
 
@@ -147,16 +156,17 @@ int main() {
 
 		//Draw plane
 		shader.setMat4("_Model", planeTransfrom.getModelMatrix());
-		planeMesh.draw((ew::DrawMode)appSettings.drawAsPoints);
+		planeMesh->draw((ew::DrawMode)appSettings.drawAsPoints);
 
 		//draw cylinder
 		shader.setMat4("_Model", cylinderTransfrom.getModelMatrix());
-		cylinderMesh.draw((ew::DrawMode)appSettings.drawAsPoints);
+		cylinderMesh->draw((ew::DrawMode)appSettings.drawAsPoints);
 
 		//Draw sphere
 		shader.setMat4("_Model", sphereTansfrom.getModelMatrix());
-		sphereMesh.draw((ew::DrawMode)appSettings.drawAsPoints);
+		sphereMesh->draw((ew::DrawMode)appSettings.drawAsPoints);
 
+		
 		//Render UI
 		{
 			ImGui_ImplGlfw_NewFrame();
@@ -199,6 +209,48 @@ int main() {
 				else
 					glDisable(GL_CULL_FACE);
 			}
+			ImGui::End();
+			ImGui::Begin("Dynamic");
+			if (ImGui::CollapsingHeader("Cylinder"))
+			{
+				if (ImGui::SliderInt("cylinder segements", &cylSubdivision, 3, 1000) ||
+					ImGui::SliderFloat("hight", &cylHeight, 0.001, 5) || ImGui::SliderFloat("Cylinder radius", &cylRadius, 0.001, 5))
+				{
+					cylinderMeshData = wm::createCylinder(cylHeight, cylRadius, cylSubdivision);
+
+					delete cylinderMesh;
+
+					cylinderMesh = new ew::Mesh(cylinderMeshData);
+				}
+
+			}
+			
+			if (ImGui::CollapsingHeader("Sphere"))
+			{
+				if (ImGui::SliderInt("sphere segments", &sphrSubdivision, 3, 1000) ||
+					ImGui::SliderFloat("Sphere radius", &sphrRadius, 0.001, 5))
+				{
+					sphereMeshData = wm::createSphere(sphrRadius, sphrSubdivision);
+
+					delete sphereMesh;
+
+					sphereMesh = new ew::Mesh(sphereMeshData);
+				}
+			}
+			if (ImGui::CollapsingHeader("Plane"))
+			{
+				if (ImGui::SliderInt("plane segments", &planeSubdivision, 1, 1000) ||
+					ImGui::SliderFloat("plane size", &planeSize,1 , 20))
+				{
+					planeMeshData = wm::createPlane(planeSize, planeSubdivision);
+
+					delete planeMesh;
+
+					planeMesh = new ew::Mesh(planeMeshData);
+
+				}
+			}
+
 			ImGui::End();
 			
 			ImGui::Render();
