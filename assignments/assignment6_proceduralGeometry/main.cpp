@@ -117,6 +117,18 @@ int main() {
 	int sphrSubdivision = 16;
 	float sphrRadius = 0.5;
 
+	ew::MeshData torusMeshData = wm::createTorus(0.5, 1, 10, 10);
+
+	ew::Mesh* torusMesh = new ew::Mesh(torusMeshData);
+	ew::Transform torusTransform;
+	torusTransform.position = ew::Vec3(-7.5f, -0.0f, -0.0f);
+
+	float torInnerRad = 0.5;
+	float torOuterRad = 1;
+	int torSlices = 10;
+	int torStacks = 10;
+
+
 	resetCamera(camera,cameraController);
 
 	while (!glfwWindowShouldClose(window)) {
@@ -165,6 +177,11 @@ int main() {
 		//Draw sphere
 		shader.setMat4("_Model", sphereTansfrom.getModelMatrix());
 		sphereMesh->draw((ew::DrawMode)appSettings.drawAsPoints);
+
+
+		//Draw torus
+		shader.setMat4("_Model", torusTransform.getModelMatrix());
+		torusMesh->draw((ew::DrawMode)appSettings.drawAsPoints);
 
 		
 		//Render UI
@@ -249,6 +266,21 @@ int main() {
 					planeMesh = new ew::Mesh(planeMeshData);
 
 				}
+			}
+			if (ImGui::CollapsingHeader("Torus"))
+			{
+				if (ImGui::SliderFloat("inner radius", &torInnerRad, 0.10, 10) ||
+					ImGui::SliderFloat("outer radius", &torOuterRad, 0.10, 10) ||
+					ImGui::SliderInt("slices", &torSlices, 3, 50) ||
+					ImGui::SliderInt("stacks", &torStacks, 3, 50))
+				{
+					torusMeshData = wm::createTorus(torInnerRad, torOuterRad, torSlices, torStacks);
+
+					delete torusMesh;
+
+					torusMesh = new ew::Mesh(torusMeshData);
+				}
+			
 			}
 
 			ImGui::End();

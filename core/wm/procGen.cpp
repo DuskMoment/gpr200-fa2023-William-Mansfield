@@ -241,6 +241,79 @@ namespace wm
 		}
 		return sphere;
 	};
+
+	ew::MeshData createTorus(float innerRadius, float outerRadius, int sl, int st)
+	{
+		ew::MeshData torus;
+		
+		//ring radius (thick part of the dount)
+		float phi = 0.0;
+		float dp = ew::TAU / sl;
+		//torus radius 
+		float theta = 0.0;
+		float dt = ew::TAU / st;
+		
+
+		for (int stack = 0; stack <= st; stack++)
+		{
+			theta = dt * stack;
+			for (int slice = 0; slice <= sl; slice++)
+			{
+				ew::Vertex vertex;
+				phi = dp * slice;
+				vertex.pos.x = cos(theta) * (outerRadius + cos(phi) * innerRadius);
+				vertex.pos.y = sin(theta) * (outerRadius + cos(phi) * innerRadius);
+				vertex.pos.z = sin(phi) * innerRadius;
+
+				//normals 
+				//tangent for big circle
+				float tx = -sin(theta);
+				float ty = cos(theta);
+				float tz = 0;
+				ew::Vec3 tVector = ew::Vec3(tx, ty, tz);
+				//tangent for small circle
+				float sx = cos(theta) * (-sin(phi));
+				float sy = sin(theta) * (-sin(phi));
+				float sz = cos(phi);
+				ew::Vec3 sVector = ew::Vec3(sx, sy, sz);
+				//cross product
+				vertex.normal = ew::Normalize(ew::Cross(tVector, sVector));
+
+				//UV
+				vertex.uv = ew::Vec2(slice / static_cast<float>(sl), stack / static_cast<float>(st));
+				torus.vertices.push_back(vertex);
+
+				
+			}
+		}
+
+		//indices 
+		sl = sl + 1;
+		for (int stack = 0; stack < st; stack++)
+		{
+
+			for (int slice = 0; slice < sl-1; slice++)
+			{
+
+				unsigned int start = stack * sl + slice;
+
+			
+				//tri one // flip the slice and stack 
+				torus.indices.push_back(start);
+				torus.indices.push_back(start + 1 + sl);
+				torus.indices.push_back(start + 1);
+				
+				//tri two
+				torus.indices.push_back(start);
+				torus.indices.push_back(start + sl);
+				torus.indices.push_back(start + sl + 1);
+
+
+			}
+		}
+
+		return torus;
+	}
 	
 	
 }

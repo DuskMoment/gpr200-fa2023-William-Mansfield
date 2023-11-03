@@ -11,4 +11,7 @@ namespace wm
 
 	void createCylinderVertices(float yPos, ew::MeshData& mesh, float radius, int numSegemnts, bool isTop);
 
+	ew::MeshData createTorus(float innerRadius, float outerRadius, int sl, int st);
+
+
 }
