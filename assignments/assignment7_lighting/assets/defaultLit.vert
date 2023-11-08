@@ -17,9 +17,11 @@ out vec3 cameraVector;
 void main(){
 	vs_out.UV = vUV;
 	//testing - with out w compnent 
-	cameraVector = vPos * mat3(inverse(_ViewProjection));
-
-	vs_out.worldPosition = mat3(_Model)*vec3(vPos);
+	
+	
+	vs_out.worldPosition = mat3(_Model)* vPos;
+	cameraVector = vPos* mat3(_ViewProjection);
 	vs_out.worldNormal = transpose(inverse(mat3(_Model)))*vNormal;
+
 	gl_Position = _ViewProjection * _Model * vec4(vPos,1.0);
 }

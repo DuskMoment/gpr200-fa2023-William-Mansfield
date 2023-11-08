@@ -32,6 +32,8 @@ struct Light
 	ew::Vec3 position; //world space
 	ew::Vec3 color; //RGB
 };
+
+Light lights[4];
 struct Material
 {
 	//all 1-0 ranges
@@ -43,6 +45,7 @@ struct Material
 
 
 };
+
 int main() {
 	printf("Initializing...");
 	if (!glfwInit()) {
@@ -79,10 +82,10 @@ int main() {
 
 	//light object
 	ew::Shader unlitShader("assets/unlit.vert", "assets/unlit.frag");
-	ew::Mesh unlitShpereMesh(ew::createSphere(1, 5));
+	ew::Mesh unlitShpereMesh(ew::createSphere(0.2, 10));
 
 	ew::Transform unLitsphereTransfrom;
-	unLitsphereTransfrom.position = ew::Vec3(0.0, 3.0, 0.0);
+	unLitsphereTransfrom.position = ew::Vec3(0.0, 1.5, -2.0);
 
 	//Create cube
 	ew::Mesh cubeMesh(ew::createCube(1.0f));
@@ -99,6 +102,8 @@ int main() {
 	sphereTransform.position = ew::Vec3(-1.5f, 0.0f, 0.0f);
 	cylinderTransform.position = ew::Vec3(1.5f, 0.0f, 0.0f);
 
+	lights[0].position = unLitsphereTransfrom.position;
+	lights[0].color = ew::Vec3(1.0, 1.0, 1.0);
 	resetCamera(camera,cameraController);
 
 	while (!glfwWindowShouldClose(window)) {
@@ -134,11 +139,24 @@ int main() {
 		shader.setMat4("_Model", cylinderTransform.getModelMatrix());
 		cylinderMesh.draw();
 
+		shader.setVec3("_Lights[0].position", lights[0].position);
+		shader.setVec3("_Lights[0].color", lights[0].color);
+
+		
+
+		shader.setFloat("_Material.ambientK", 0.2);
+		shader.setFloat("_Material.diffuseK",0.6);
+		shader.setFloat("_Material.specular", 0.5);
+		shader.setFloat("_Material.shininess",256.0);
+
+		shader.setVec3("cameraPos", camera.position);
 		unlitShader.use();
 
 		unlitShader.setMat4("_ViewProjection", camera.ProjectionMatrix() * camera.ViewMatrix());
 		unlitShader.setMat4("_Model", unLitsphereTransfrom.getModelMatrix());
 		unlitShader.setVec3("_Color", ew::Vec3(1.0, 1.0, 1.0));
+
+
 		unlitShpereMesh.draw();
 
 		//TODO: Render point lights
