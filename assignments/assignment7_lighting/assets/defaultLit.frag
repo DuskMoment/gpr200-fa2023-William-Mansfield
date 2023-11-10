@@ -15,8 +15,9 @@ struct Light
 	vec3 color;
 
 };
-#define MAX_LIGHTS 1
+#define MAX_LIGHTS 4
 uniform Light _Lights[MAX_LIGHTS];
+uniform int numLights;
 
 struct Material
 {
@@ -31,6 +32,8 @@ uniform Material _Material;
 
 uniform vec3 cameraPos;
 
+uniform int ifPhong;
+
 
 void main(){
 
@@ -39,22 +42,34 @@ void main(){
 	vec3 normal = normalize(fs_in.worldNormal);
 	vec3 postionNormal = normalize(_Lights[0].position-fs_in.worldPosition);
 	
-	//test color
-	vec3 color = _Lights[0].color;
+	//color
+	vec3 color;
 	
-//	for(int i = 0; i < MAX_LIGHTS; i++)
-//	{
-//		
-//		color =+ _Lights[i].color * diffuseK*max(dot(fs_in.worldPosition,normal),0); //+ _Lights[i].color * specular * pow(dot(reflection,cameraVector), shininess);
-//
-//	}
-	//ambient 
-	 color = _Material.ambientK * _Lights[0].color;
-	 //diffusion
-	 color += _Material.diffuseK * _Lights[0].color * max(dot(normal,normalize(postionNormal)),0);
-	 //specular -- not working
-	 vec3 r = reflect(-postionNormal, normal);
-	 color += _Lights[0].color * _Material.specular * pow(max(dot(r,normalize(cameraPos-postionNormal)),0),_Material.shininess); 
+	for(int i = 0; i < numLights; i++)
+	{
+		
+		postionNormal = normalize(_Lights[i].position-fs_in.worldPosition);
+		//ambient 
+		color += _Material.ambientK * _Lights[i].color;
+		//diffusion
+		color += _Material.diffuseK * _Lights[i].color * max(dot(normal,normalize(postionNormal)),0);
+		//specular -- not working
+		vec3 r;
+		if(ifPhong == 1)
+		{
+			 r = normalize(postionNormal + normalize(cameraPos - fs_in.worldPosition));
+			 color += _Lights[i].color * _Material.specular * pow(max(dot(r,normal),0),_Material.shininess);
+		}
+		else
+		{
+			 r = reflect(-postionNormal, normal);
+			 color += _Lights[i].color * _Material.specular * pow(max(dot(r,normalize(cameraPos-postionNormal)),0),_Material.shininess);
+			
+		}
+		
+		
+	}
+	
 	
 	FragColor = vec4(color, 1.0) * texture(_Texture,fs_in.UV);
 }

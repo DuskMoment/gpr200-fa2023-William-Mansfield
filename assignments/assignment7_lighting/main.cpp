@@ -21,6 +21,8 @@ void resetCamera(ew::Camera& camera, ew::CameraController& cameraController);
 int SCREEN_WIDTH = 1080;
 int SCREEN_HEIGHT = 720;
 
+const int MAX_LIGHTS = 4;
+
 float prevTime;
 ew::Vec3 bgColor = ew::Vec3(0.1f);
 
@@ -33,18 +35,23 @@ struct Light
 	ew::Vec3 color; //RGB
 };
 
-Light lights[4];
+Light lights[MAX_LIGHTS];
+int numberOfLights = 1;
+int ifPhongInt = 1;
+bool  ifPhongBool = true;
+bool orbit = false;
 struct Material
 {
 	//all 1-0 ranges
-	float ambientK;
-	float diffuseK;
-	float specular;
+	float ambientK = 0.1;
+	float diffuseK = 0.3;
+	float specular = 0.5;
 	//not 1 - 0
-	float shininess;
+	float shininess = 256.0;
 
 
 };
+Material material;
 
 int main() {
 	printf("Initializing...");
@@ -84,8 +91,13 @@ int main() {
 	ew::Shader unlitShader("assets/unlit.vert", "assets/unlit.frag");
 	ew::Mesh unlitShpereMesh(ew::createSphere(0.2, 10));
 
-	ew::Transform unLitsphereTransfrom;
-	unLitsphereTransfrom.position = ew::Vec3(0.0, 1.5, -2.0);
+
+	ew::Transform unLitsphereTransfrom[MAX_LIGHTS];
+	
+	unLitsphereTransfrom[0].position = ew::Vec3(0.0, 1.5, -2.0);
+	unLitsphereTransfrom[1].position = ew::Vec3(0.0, 1.5, 2.0);
+	unLitsphereTransfrom[2].position = ew::Vec3(2.0, 1.5, 0.0);
+	unLitsphereTransfrom[3].position = ew::Vec3(-2.0, 1.5, 0.0);
 
 	//Create cube
 	ew::Mesh cubeMesh(ew::createCube(1.0f));
@@ -102,8 +114,19 @@ int main() {
 	sphereTransform.position = ew::Vec3(-1.5f, 0.0f, 0.0f);
 	cylinderTransform.position = ew::Vec3(1.5f, 0.0f, 0.0f);
 
-	lights[0].position = unLitsphereTransfrom.position;
+	//default light colors
+	lights[0].position = unLitsphereTransfrom[0].position;
 	lights[0].color = ew::Vec3(1.0, 1.0, 1.0);
+
+	lights[1].position = unLitsphereTransfrom[1].position;
+	lights[1].color = ew::Vec3(0.0, 1.0, 1.0);
+
+	lights[2].position = unLitsphereTransfrom[2].position;
+	lights[2].color = ew::Vec3(1.0, 0.0, 1.0);
+
+	lights[3].position = unLitsphereTransfrom[3].position;
+	lights[3].color = ew::Vec3(1.0, 1.0, 0.0);
+
 	resetCamera(camera,cameraController);
 
 	while (!glfwWindowShouldClose(window)) {
@@ -139,25 +162,42 @@ int main() {
 		shader.setMat4("_Model", cylinderTransform.getModelMatrix());
 		cylinderMesh.draw();
 
-		shader.setVec3("_Lights[0].position", lights[0].position);
-		shader.setVec3("_Lights[0].color", lights[0].color);
+		for (int i = 0; i < numberOfLights; i++)
+		{
+			 
+			shader.setVec3("_Lights["+ std::to_string(i)+"].position", lights[i].position);
+			shader.setVec3("_Lights["+ std::to_string(i) +"].color", lights[i].color);
 
-		
+		}
 
-		shader.setFloat("_Material.ambientK", 0.2);
-		shader.setFloat("_Material.diffuseK",0.6);
-		shader.setFloat("_Material.specular", 0.5);
-		shader.setFloat("_Material.shininess",256.0);
 
+		//second light
+		shader.setVec3("_Lights[1].position", lights[1].position);
+		shader.setVec3("_Lights[1].color", lights[1].color);
+
+
+		shader.setFloat("_Material.ambientK",material.ambientK);
+		shader.setFloat("_Material.diffuseK",material.diffuseK);
+		shader.setFloat("_Material.specular",material.specular);
+		shader.setFloat("_Material.shininess",material.shininess);
+
+		//ask if i need camera position
 		shader.setVec3("cameraPos", camera.position);
+		shader.setInt("ifPhong", ifPhongInt);
+		shader.setInt("numLights", numberOfLights);
 		unlitShader.use();
 
 		unlitShader.setMat4("_ViewProjection", camera.ProjectionMatrix() * camera.ViewMatrix());
-		unlitShader.setMat4("_Model", unLitsphereTransfrom.getModelMatrix());
-		unlitShader.setVec3("_Color", ew::Vec3(1.0, 1.0, 1.0));
 
 
-		unlitShpereMesh.draw();
+		for (int i = 0; i < numberOfLights; i++)
+		{
+			unlitShader.setMat4("_Model", unLitsphereTransfrom[i].getModelMatrix());
+			unlitShader.setVec3("_Color", lights[i].color);
+			unlitShpereMesh.draw();
+		}
+		
+		//second light
 
 		//TODO: Render point lights
 
@@ -186,6 +226,49 @@ int main() {
 					resetCamera(camera, cameraController);
 				}
 			}
+			if (ImGui::CollapsingHeader("material"))
+			{
+				ImGui::SliderFloat("ambient", &material.ambientK, 0, 1);
+				ImGui::SliderFloat("diffuse", &material.diffuseK, 0, 1);
+				ImGui::SliderFloat("specular", &material.specular, 0, 1);
+				ImGui::SliderFloat("shininess", &material.shininess, 2, 256);
+				
+			}
+			ImGui::SliderInt("number of lights", &numberOfLights, 1, MAX_LIGHTS);
+			if (ImGui::Checkbox("Blinn-phong", &ifPhongBool))
+			{
+				if (ifPhongBool == true)
+				{
+					ifPhongInt == 1;
+				}
+				else
+				{
+					ifPhongInt == 0;
+				}
+			}
+			ImGui::Checkbox("orbit", &orbit);
+			if (orbit == true)
+			{
+				for (int i = 0; i < numberOfLights; i++)
+				{
+					ew::Vec3 nextPos = ew::Cross(ew::Vec3(0, 1, 0), lights[i].position);
+					lights[i].position += nextPos * 0.001;
+					unLitsphereTransfrom[i].position = lights[i].position;
+				}
+			}
+
+			for (int i = 0; i < numberOfLights; i++)
+			{
+				ImGui::PushID(i);
+				if (ImGui::CollapsingHeader("light"))
+				{
+					ImGui::ColorEdit3("light color", &lights[i].color.x);
+					ImGui::DragFloat3("light position", &lights[i].position.x);
+					unLitsphereTransfrom[i].position = lights[i].position;
+				}
+				ImGui::PopID();
+			}
+
 
 			ImGui::ColorEdit3("BG color", &bgColor.x);
 			ImGui::End();
