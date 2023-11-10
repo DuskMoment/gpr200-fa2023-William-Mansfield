@@ -239,13 +239,15 @@ int main() {
 			{
 				if (ifPhongBool == true)
 				{
-					ifPhongInt == 1;
+					ifPhongInt = 1;
 				}
 				else
 				{
-					ifPhongInt == 0;
+					ifPhongInt = 0;
 				}
+
 			}
+			
 			ImGui::Checkbox("orbit", &orbit);
 			if (orbit == true)
 			{

@@ -62,7 +62,7 @@ void main(){
 		}
 		else
 		{
-			 r = reflect(-postionNormal, normal);
+			 r = normalize(reflect(-postionNormal, normal));
 			 color += _Lights[i].color * _Material.specular * pow(max(dot(r,normalize(cameraPos-postionNormal)),0),_Material.shininess);
 			
 		}
