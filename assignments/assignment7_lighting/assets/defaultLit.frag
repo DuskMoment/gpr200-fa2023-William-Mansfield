@@ -49,6 +49,7 @@ void main(){
 	{
 		
 		postionNormal = normalize(_Lights[i].position-fs_in.worldPosition);
+		normal = normalize(fs_in.worldNormal);
 		//ambient 
 		color += _Material.ambientK * _Lights[i].color;
 		//diffusion
