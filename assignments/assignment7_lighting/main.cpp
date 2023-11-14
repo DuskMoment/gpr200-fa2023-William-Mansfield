@@ -181,7 +181,6 @@ int main() {
 		shader.setFloat("_Material.specular",material.specular);
 		shader.setFloat("_Material.shininess",material.shininess);
 
-		//ask if i need camera position
 		shader.setVec3("cameraPos", camera.position);
 		shader.setInt("ifPhong", ifPhongInt);
 		shader.setInt("numLights", numberOfLights);
