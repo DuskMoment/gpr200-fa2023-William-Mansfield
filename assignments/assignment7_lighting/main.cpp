@@ -172,8 +172,8 @@ int main() {
 
 
 		//second light
-		shader.setVec3("_Lights[1].position", lights[1].position);
-		shader.setVec3("_Lights[1].color", lights[1].color);
+	/*	shader.setVec3("_Lights[1].position", lights[1].position);
+		shader.setVec3("_Lights[1].color", lights[1].color);*/
 
 
 		shader.setFloat("_Material.ambientK",material.ambientK);
