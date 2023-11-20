@@ -33,35 +33,72 @@ uniform Material _Material;
 
 uniform vec3 cameraPos;
 
-uniform int ifPhong;
+uniform vec3 cameraTarget;
+
+uniform int _ifCameraLocked;
 
 
 void main(){
 
-	vec3 worldTolightVector = normalize(_Lights[0].position - fs_in.worldPosition );
+	
 	vec3 worldNormal = normalize(fs_in.worldNormal);
 
+	vec3 worldTolightVector;
+
+	vec3 cellColor;
+
+	if(_ifCameraLocked == 1)
+	{
+		worldTolightVector = normalize(cameraPos - fs_in.worldPosition );
+
+		 cellColor = texture(_CellTexture, vec2(dot(worldTolightVector, worldNormal)),0).rgb;
+
+		cellColor += _Material.ambientK * vec3(1.0,1.0,1.0);
+
+	}
+	else
+	{
+		worldTolightVector = normalize(_Lights[0].position - fs_in.worldPosition );
+
+		 cellColor = texture(_CellTexture, vec2(dot(worldTolightVector, worldNormal)),0).rgb;
+
+		 cellColor += _Material.ambientK * vec3(1.0,1.0,1.0);
+	
+		if(dot(normalize(cameraPos - fs_in.worldPosition), worldNormal) < 0.1)
+		{
+			cellColor = cellColor * vec3(0.0,0.0,0.0);
+		}
+		
+	}
+	//get position from the texture of what color it needs to be
+	
+
+	//create outline
+
+	
+
+	
+	
 
 	vec3 color;
-	if(dot(worldTolightVector,worldNormal) > 0.5)
-	{
-		color = vec3(1.0,1.0,1.0);
-	}
-	else if(dot(worldTolightVector,worldNormal) > 0.3)
-	{
-		
-		color = vec3(0.33,0.33,0.33);
-	}
-
-	else if(dot(worldTolightVector,worldNormal) >0.0)
-	{
-		color = vec3(0.1,0.1,0.1);
-	}
-	else 
-	{
-		color = vec3(0.0,0.0,0.0);
-	}
-	
-	FragColor = vec4(color,1.0) * texture(_Texture,fs_in.UV);
- 
+//	if(dot(worldTolightVector,worldNormal) > 0.5)
+//	{
+//		color = vec3(1.0,1.0,1.0);
+//	}
+//	else if(dot(worldTolightVector,worldNormal) > 0.3)
+//	{
+//		
+//		color = vec3(0.33,0.33,0.33);
+//	}
+//
+//	else if(dot(worldTolightVector,worldNormal) >0.0)
+//	{
+//		color = vec3(0.1,0.1,0.1);
+//	}
+//	else 
+//	{
+//		color = vec3(0.0,0.0,0.0);
+//	}
+//	
+	FragColor = vec4(cellColor,1.0) * texture(_Texture,fs_in.UV);
  }

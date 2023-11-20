@@ -14,6 +14,7 @@
 #include <ew/transform.h>
 #include <ew/camera.h>
 #include <ew/cameraController.h>
+#include <wm/texture.h>
 
 void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 void resetCamera(ew::Camera& camera, ew::CameraController& cameraController);
@@ -37,8 +38,8 @@ struct Light
 
 Light lights[MAX_LIGHTS];
 int numberOfLights = 1;
-int ifPhongInt = 1;
-bool  ifPhongBool = true;
+int ifCameraLockedInt = 1;
+bool  ifCameraLocked = true;
 bool orbit = false;
 struct Material
 {
@@ -86,7 +87,8 @@ int main() {
 
 	ew::Shader shader("assets/defaultLit.vert", "assets/defaultLit.frag");
 	unsigned int brickTexture = ew::loadTexture("assets/brick_color.jpg", GL_REPEAT, GL_LINEAR);
-	unsigned int cellTexture = ew::loadTexture("assets/TestImage.jpg", GL_REPEAT, GL_LINEAR);
+	//load texture for shading
+	unsigned int cellTexture = ew::loadTexture("assets/CellGrade.png", GL_CLAMP_TO_EDGE, GL_LINEAR);
 
 	//light object
 	ew::Shader unlitShader("assets/unlit.vert", "assets/unlit.frag");
@@ -151,8 +153,9 @@ int main() {
 		shader.setInt("_Texture", 0);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, cellTexture);
-		shader.setInt("_CellTexture", 0);
+		shader.setInt("_CellTexture", 1);
 		shader.setMat4("_ViewProjection", camera.ProjectionMatrix() * camera.ViewMatrix());
+		shader.setVec3("cameraTarget", camera.target);
 
 		//Draw shapes
 		shader.setMat4("_Model", cubeTransform.getModelMatrix());
@@ -187,7 +190,7 @@ int main() {
 		shader.setFloat("_Material.shininess", material.shininess);
 
 		shader.setVec3("cameraPos", camera.position);
-		shader.setInt("ifPhong", ifPhongInt);
+		shader.setInt("_ifCameraLocked", ifCameraLockedInt);
 		shader.setInt("numLights", numberOfLights);
 		unlitShader.use();
 
@@ -239,15 +242,15 @@ int main() {
 
 			}
 			ImGui::SliderInt("number of lights", &numberOfLights, 1, MAX_LIGHTS);
-			if (ImGui::Checkbox("Blinn-phong", &ifPhongBool))
+			if (ImGui::Checkbox("emmit light from camera", &ifCameraLocked))
 			{
-				if (ifPhongBool == true)
+				if (ifCameraLocked == true)
 				{
-					ifPhongInt = 1;
+					ifCameraLockedInt = 1;
 				}
 				else
 				{
-					ifPhongInt = 0;
+					ifCameraLockedInt = 0;
 				}
 
 			}
