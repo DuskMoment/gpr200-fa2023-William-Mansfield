@@ -19,7 +19,7 @@ void main(){
 	//testing - with out w compnent 
 	
 	
-	vs_out.worldPosition = mat3(_Model)* vPos;
+	vs_out.worldPosition = mat3(_Model) * vPos;
 	cameraVector = vPos* mat3(_ViewProjection);
 	vs_out.worldNormal = transpose(inverse(mat3(_Model)))*vNormal;
 

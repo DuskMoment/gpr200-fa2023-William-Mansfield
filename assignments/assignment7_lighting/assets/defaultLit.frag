@@ -54,7 +54,7 @@ void main(){
 		color += _Material.ambientK * _Lights[i].color;
 		//diffusion
 		color += _Material.diffuseK * _Lights[i].color * max(dot(normal,normalize(postionNormal)),0);
-		//specular -- not working
+		//specular 
 		vec3 r;
 		if(ifPhong == 1)
 		{
