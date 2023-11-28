@@ -54,11 +54,22 @@ void main(){
 	 //ambient 
 	 cellColor += _Material.ambientK * vec3(1.0,1.0,1.0);
 	 //diffuse 
+
 	 cellColor +=  _Material.diffuseK * texture(_CellTexture, vec2(max(dot(worldTolightVector, worldNormal),0)),0).rgb;
 
 	 vec3 r;
-	  r = normalize(worldTolightVector + normalize(cameraPos - fs_in.worldPosition));
-	 cellColor += vec3(1.0,1.0,1.0) * _Material.specular * pow(max(dot(r,worldNormal),0),_Material.shininess);
+	 r = normalize(worldTolightVector + normalize(cameraPos - fs_in.worldPosition));
+
+	 //step between 0.8 or some float
+	 //get the fragment shader drivites 
+	//dFdx, dFdy 
+	
+	float specular = pow(max(dot(r,worldNormal),0),_Material.shininess);
+
+	specular = step(0.2,specular);
+	
+	cellColor += (vec3(1.0,1.0,1.0) *_Material.specular *specular);
+
 	vec3 color;
 //	if(dot(worldTolightVector,worldNormal) > 0.5)
 //	{
