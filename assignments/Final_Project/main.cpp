@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <math.h>
+#include <iostream>
 
 #include <ew/external/glad.h>
 #include <ew/ewMath/ewMath.h>
@@ -15,6 +16,8 @@
 #include <ew/camera.h>
 #include <ew/cameraController.h>
 #include <wm/texture.h>
+#include <wm/perlinNoise.h>
+#include <wm/procGen.h>
 
 void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 void resetCamera(ew::Camera& camera, ew::CameraController& cameraController);
@@ -107,15 +110,18 @@ int main() {
 	ew::Mesh planeMesh(ew::createPlane(5.0f, 5.0f, 10));
 	ew::Mesh sphereMesh(ew::createSphere(0.5f, 64));
 	ew::Mesh cylinderMesh(ew::createCylinder(0.5f, 1.0f, 32));
+	ew::Mesh landMesh(wm::createLand(40.0f, 400, 119));
 
 	//Initialize transforms
 	ew::Transform cubeTransform;
 	ew::Transform planeTransform;
 	ew::Transform sphereTransform;
 	ew::Transform cylinderTransform;
+	ew::Transform landTransform;
 	planeTransform.position = ew::Vec3(0, -1.0, 0);
 	sphereTransform.position = ew::Vec3(-1.5f, 0.0f, 0.0f);
 	cylinderTransform.position = ew::Vec3(1.5f, 0.0f, 0.0f);
+	landTransform.position = ew::Vec3(0.0f, 2.0f, 0.0f);
 
 	//default light colors
 	lights[0].position = unLitsphereTransfrom[0].position;
@@ -169,6 +175,9 @@ int main() {
 
 		shader.setMat4("_Model", cylinderTransform.getModelMatrix());
 		cylinderMesh.draw();
+
+		shader.setMat4("_Model", landTransform.getModelMatrix());
+		landMesh.draw();
 
 		for (int i = 0; i < numberOfLights; i++)
 		{
@@ -310,5 +319,4 @@ void resetCamera(ew::Camera& camera, ew::CameraController& cameraController) {
 	cameraController.yaw = 0.0f;
 	cameraController.pitch = 0.0f;
 }
-
 

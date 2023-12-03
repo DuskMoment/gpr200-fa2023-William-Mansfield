@@ -314,6 +314,65 @@ namespace wm
 
 		return torus;
 	}
+
+	ew::MeshData createLand(float size, int subdivisions, int seed)
+	{
+		ew::MeshData plane;
+		float width = size;
+		float height = size;
+		ir::PerlinNoise perlin = ir::PerlinNoise::PerlinNoise(seed);
+
+		
+
+		
+
+		//vertex
+		for (int row = 0; row <= subdivisions; row++)
+		{
+			for (int col = 0; col <= subdivisions; col++)
+			{
+				ew::Vertex vertex;
+				float colSub = static_cast<float>(col) / subdivisions;
+				float rowSub = static_cast<float>(row) / subdivisions;
+
+				float n = perlin.noiseGen(row * 0.01, col * 0.01);
+				n += 1.0;
+				n *= 0.5;
+				vertex.pos.y = n * 10;
+				
+				vertex.pos.x = width * colSub;
+				
+				vertex.pos.z = -height * rowSub;
+
+				//normals
+				vertex.normal = ew::Vec3(0, 1, 0);
+				//UVs
+				vertex.uv = ew::Vec2(colSub, rowSub);
+
+				plane.vertices.push_back(vertex);
+			}
+		}
+		//indecies
+		float columbs = subdivisions + 1;
+		for (int row = 0; row < subdivisions; row++)
+		{
+			for (int col = 0; col < subdivisions; col++)
+			{
+
+				unsigned int start = row * columbs + col;
+				//bottom triangle
+				plane.indices.push_back(start);
+				plane.indices.push_back(start + 1);
+				plane.indices.push_back(start + columbs + 1);
+				//bottom triangle
+				plane.indices.push_back(start);
+				plane.indices.push_back(start + columbs + 1);
+				plane.indices.push_back(start + columbs);
+
+			}
+		}
+		return plane;
+	};
 	
 	
 }
