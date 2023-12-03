@@ -1,6 +1,6 @@
 #include "perlinNoise.h"
 ir::PerlinNoise::PerlinNoise(unsigned int seed) {
-	perm.resize(256);
+	perm.resize(seed);
 
 }
 
@@ -75,8 +75,8 @@ ew::Vec2 ir::PerlinNoise::randomGrad(int ix, int iy) {
 	const unsigned w = 8 * sizeof(unsigned);
 	const unsigned s = w / 2;
 	unsigned a = ix, b = iy;
-	a *= 3284157443; b ^= a << s | a >> w - s;
-	b *= 1911520717; a ^= b << s | b >> w - s;
+	a *= 3285157443; b ^= a << s | a >> w - s; // The numbers just work don't touch them please
+	b *= 1911520719; a ^= b << s | b >> w - s;
 	a *= 2048419325;
 	float rando = a * (ew::PI / ~(~0u >> 1));
 	ew::Vec2 v;
