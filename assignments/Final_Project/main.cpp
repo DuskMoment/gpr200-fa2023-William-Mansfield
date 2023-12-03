@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <math.h>
+#include <iostream>
 
 #include <ew/external/glad.h>
 #include <ew/ewMath/ewMath.h>
@@ -15,6 +16,7 @@
 #include <ew/camera.h>
 #include <ew/cameraController.h>
 #include <wm/texture.h>
+#include <wm/perlinNoise.h>
 #include <wm/procGen.h>
 
 void framebufferSizeCallback(GLFWwindow* window, int width, int height);
@@ -42,6 +44,7 @@ int numberOfLights = 1;
 
 
 
+
 bool orbit = false;
 
 
@@ -59,6 +62,14 @@ struct Material
 
 };
 Material material;
+
+struct Wave { // adding struct for water wave
+	float amplitude = 0.1;
+	float wavelength = 10.0;
+	float speed = 1.0;
+	Material material;
+};
+Wave wave;
 
 int main() {
 	printf("Initializing...");
@@ -100,6 +111,12 @@ int main() {
 	ew::Shader unlitShader("assets/unlit.vert", "assets/unlit.frag");
 	ew::Mesh unlitShpereMesh(ew::createSphere(0.2, 10));
 
+	// water shader
+	ew::Shader waterShader("assets/water.vert", "assets/water.frag");
+	ew::Mesh waterPlaneMesh(ew::createPlane(5.0f, 5.0f, 50)); // New water plane for water shaders tee hee hi Will
+	ew::Transform waterPlaneTransform; // transform for water plan
+	waterPlaneTransform.position = ew::Vec3(-5.0, -1.0, 0); // setting pos for water plane transform
+
 
 	ew::Transform unLitsphereTransfrom[MAX_LIGHTS];
 
@@ -113,17 +130,19 @@ int main() {
 	ew::Mesh planeMesh(ew::createPlane(5.0f, 5.0f, 10));
 	ew::Mesh sphereMesh(ew::createSphere(0.5f, 64));
 	ew::Mesh cylinderMesh(ew::createCylinder(0.5f, 1.0f, 32));
-	//torus
-	ew::Mesh torusMesh(wm::createTorus(0.3f, 1.0f, 30.0f, 30.0f));
 
+	ew::Mesh landMesh(wm::createLand(40.0f, 400, 119));	//torus
+	ew::Mesh torusMesh(wm::createTorus(0.3f, 1.0f, 30.0f, 30.0f));
 	//Initialize transforms
 	ew::Transform cubeTransform;
 	ew::Transform planeTransform;
 	ew::Transform sphereTransform;
 	ew::Transform cylinderTransform;
+	ew::Transform landTransform;
 	planeTransform.position = ew::Vec3(0, -1.0, 0);
 	sphereTransform.position = ew::Vec3(-1.5f, 0.0f, 0.0f);
 	cylinderTransform.position = ew::Vec3(1.5f, 0.0f, 0.0f);
+	landTransform.position = ew::Vec3(0.0f, 2.0f, 0.0f);
 
 	//more torus mesh
 	ew::Transform torusTransform;
@@ -182,10 +201,9 @@ int main() {
 		shader.setMat4("_Model", cylinderTransform.getModelMatrix());
 		cylinderMesh.draw();
 
-		shader.setMat4("_Model", torusTransform.getModelMatrix());
-		torusMesh.draw();
-		
-		for (int i = 0; i < numberOfLights; i++)
+		shader.setMat4("_Model", landTransform.getModelMatrix());
+		landMesh.draw();		shader.setMat4("_Model", torusTransform.getModelMatrix());
+		torusMesh.draw();		for (int i = 0; i < numberOfLights; i++)
 		{
 
 			shader.setVec3("_Lights[" + std::to_string(i) + "].position", lights[i].position);
@@ -220,6 +238,23 @@ int main() {
 			unlitShpereMesh.draw();
 		}
 
+		// WATER SHADER STUFF
+		waterShader.use();
+		waterShader.setMat4("_ViewProjection", camera.ProjectionMatrix() * camera.ViewMatrix());
+		waterShader.setMat4("_Model", waterPlaneTransform.getModelMatrix());
+		waterShader.setFloat("_Material.ambientK", wave.material.ambientK);
+		waterShader.setFloat("_Material.diffuseK", wave.material.diffuseK);
+		waterShader.setFloat("_Material.specular", wave.material.specular);
+		waterShader.setFloat("_Material.shininess", wave.material.shininess);
+		waterShader.setFloat("amplitude", wave.amplitude);
+		waterShader.setFloat("wavelength", wave.wavelength);
+		waterShader.setFloat("speed", wave.speed);
+		waterShader.setInt("numWaves", 5.0f); // not sure if going to be needed
+		waterShader.setFloat("time", time);
+		waterShader.setVec2("direction", ew::Vec2(1.0f, 0.0f));
+		waterPlaneMesh.draw();
+
+		//second light
 
 		//Render UI
 		{
@@ -281,6 +316,12 @@ int main() {
 				ImGui::PopID();
 			}
 
+			if (ImGui::CollapsingHeader("water")) {
+				ImGui::DragFloat("amplitude", &wave.amplitude, 0.05f);
+				ImGui::DragFloat("wavelength", &wave.wavelength, 0.05f);
+				ImGui::DragFloat("speed", &wave.speed, 0.05f);
+			}
+
 
 			ImGui::ColorEdit3("BG color", &bgColor.x);
 			ImGui::End();
@@ -313,5 +354,4 @@ void resetCamera(ew::Camera& camera, ew::CameraController& cameraController) {
 	cameraController.yaw = 0.0f;
 	cameraController.pitch = 0.0f;
 }
-
 

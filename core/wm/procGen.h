@@ -1,6 +1,7 @@
 #pragma once
 #include "../ew/mesh.h"
 #include"../ew/ewMath/ewMath.h"
+#include "../wm/perlinNoise.h"
 namespace wm
 {
 	ew::MeshData createSphere(float radius, int numSegments);
@@ -12,6 +13,8 @@ namespace wm
 	void createCylinderVertices(float yPos, ew::MeshData& mesh, float radius, int numSegemnts, bool isTop);
 
 	ew::MeshData createTorus(float innerRadius, float outerRadius, int sl, int st);
+
+	ew::MeshData createLand(float size, int subdivisions, int seed);
 
 
 }
