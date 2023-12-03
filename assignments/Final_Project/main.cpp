@@ -15,6 +15,7 @@
 #include <ew/camera.h>
 #include <ew/cameraController.h>
 #include <wm/texture.h>
+#include <wm/procGen.h>
 
 void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 void resetCamera(ew::Camera& camera, ew::CameraController& cameraController);
@@ -38,17 +39,22 @@ struct Light
 
 Light lights[MAX_LIGHTS];
 int numberOfLights = 1;
-int ifCameraLockedInt = 1;
-bool  ifCameraLocked = true;
+
+
+
 bool orbit = false;
+
+
 struct Material
 {
 	//all 1-0 ranges
 	float ambientK = 0.1;
 	float diffuseK = 0.3;
 	float specular = 0.5;
+	float rimK = 0.7;
 	//not 1 - 0
 	float shininess = 256.0;
+	float rimAmbientIntestiy = 4;
 
 
 };
@@ -107,6 +113,8 @@ int main() {
 	ew::Mesh planeMesh(ew::createPlane(5.0f, 5.0f, 10));
 	ew::Mesh sphereMesh(ew::createSphere(0.5f, 64));
 	ew::Mesh cylinderMesh(ew::createCylinder(0.5f, 1.0f, 32));
+	//torus
+	ew::Mesh torusMesh(wm::createTorus(0.3f, 1.0f, 30.0f, 30.0f));
 
 	//Initialize transforms
 	ew::Transform cubeTransform;
@@ -116,6 +124,10 @@ int main() {
 	planeTransform.position = ew::Vec3(0, -1.0, 0);
 	sphereTransform.position = ew::Vec3(-1.5f, 0.0f, 0.0f);
 	cylinderTransform.position = ew::Vec3(1.5f, 0.0f, 0.0f);
+
+	//more torus mesh
+	ew::Transform torusTransform;
+	torusTransform.position = ew::Vec3(-4.5f, 0.0f, 0.0f);
 
 	//default light colors
 	lights[0].position = unLitsphereTransfrom[0].position;
@@ -170,6 +182,9 @@ int main() {
 		shader.setMat4("_Model", cylinderTransform.getModelMatrix());
 		cylinderMesh.draw();
 
+		shader.setMat4("_Model", torusTransform.getModelMatrix());
+		torusMesh.draw();
+		
 		for (int i = 0; i < numberOfLights; i++)
 		{
 
@@ -179,18 +194,19 @@ int main() {
 		}
 
 
-		//second light
-	/*	shader.setVec3("_Lights[1].position", lights[1].position);
-		shader.setVec3("_Lights[1].color", lights[1].color);*/
-
-
+		//material uniforms 
 		shader.setFloat("_Material.ambientK", material.ambientK);
 		shader.setFloat("_Material.diffuseK", material.diffuseK);
 		shader.setFloat("_Material.specular", material.specular);
 		shader.setFloat("_Material.shininess", material.shininess);
+		//added Rim lighting
+		shader.setFloat("_Material.rimK", material.rimK);
+		shader.setFloat("_Material.rimAmbientIntesity", material.rimAmbientIntestiy);
 
+		//camera location
 		shader.setVec3("cameraPos", camera.position);
-		shader.setInt("_ifCameraLocked", ifCameraLockedInt);
+		
+		//nubmer of lights
 		shader.setInt("numLights", numberOfLights);
 		unlitShader.use();
 
@@ -204,9 +220,6 @@ int main() {
 			unlitShpereMesh.draw();
 		}
 
-		//second light
-
-		//TODO: Render point lights
 
 		//Render UI
 		{
@@ -239,21 +252,11 @@ int main() {
 				ImGui::SliderFloat("diffuse", &material.diffuseK, 0, 1);
 				ImGui::SliderFloat("specular", &material.specular, 0, 1);
 				ImGui::SliderFloat("shininess", &material.shininess, 2, 256);
-
+				ImGui::SliderFloat("ambient rim", &material.rimAmbientIntestiy, 0, 10);
+				ImGui::SliderFloat("rim", &material.rimK, 0, 1);
+				
 			}
 			ImGui::SliderInt("number of lights", &numberOfLights, 1, MAX_LIGHTS);
-			if (ImGui::Checkbox("emmit light from camera", &ifCameraLocked))
-			{
-				if (ifCameraLocked == true)
-				{
-					ifCameraLockedInt = 1;
-				}
-				else
-				{
-					ifCameraLockedInt = 0;
-				}
-
-			}
 
 			ImGui::Checkbox("orbit", &orbit);
 			if (orbit == true)
