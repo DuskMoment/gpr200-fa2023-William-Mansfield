@@ -10,13 +10,10 @@ namespace ir {
 		std::vector<int> perm;
 		PerlinNoise(); // Default constructor
 		PerlinNoise(unsigned int seed);
-		float noiseGen(float x, float y);
-		// void shuffle(int &arr);
-		// std::vector<int> makePerm();
+		float noiseGen(float x, float y, unsigned int seed);
 		ew::Vec2 getConstants(int val);
 		float interpolate(float a, float b, float w);
-		// float noise(float x, float y);
-		ew::Vec2 randomGrad(int ix, int iy);
-		float dotGridGrad(int ix, int iy, float x, float y);
+		ew::Vec2 randomGrad(int ix, int iy, unsigned int seed);
+		float dotGridGrad(int ix, int iy, float x, float y, unsigned int seed);
 	};
 }

@@ -335,7 +335,7 @@ namespace wm
 				float colSub = static_cast<float>(col) / subdivisions;
 				float rowSub = static_cast<float>(row) / subdivisions;
 
-				float n = perlin.noiseGen(row * 0.01, col * 0.01);
+				float n = perlin.noiseGen(row * 0.01, col * 0.01, seed);
 				n += 1.0;
 				n *= 0.5;
 				vertex.pos.y = n * 10;

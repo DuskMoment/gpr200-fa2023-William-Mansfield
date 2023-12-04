@@ -102,5 +102,5 @@ void main(){
 	
 	
 	FragColor = vec4(cellColor,1.0) * texture(_Texture,fs_in.UV);
-	//FragColor = texture(_SpecularTexture,fs_in.UV);
+	// FragColor = texture(_Texture,fs_in.UV);
  }
