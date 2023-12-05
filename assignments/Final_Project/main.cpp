@@ -360,6 +360,7 @@ int main() {
 
 		glfwSwapBuffers(window);
 	}
+	delete landMesh;
 	printf("Shutting down...");
 }
 

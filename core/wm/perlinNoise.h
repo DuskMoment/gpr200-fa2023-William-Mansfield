@@ -7,11 +7,9 @@ namespace ir {
 		float gradient(float x, float y, float z, int hash);
 		float fade(float t);
 	public:
-		std::vector<int> perm;
 		PerlinNoise(); // Default constructor
 		PerlinNoise(unsigned int seed);
 		float noiseGen(float x, float y, unsigned int seed);
-		ew::Vec2 getConstants(int val);
 		float interpolate(float a, float b, float w);
 		ew::Vec2 randomGrad(int ix, int iy, unsigned int seed);
 		float dotGridGrad(int ix, int iy, float x, float y, unsigned int seed);

@@ -1,20 +1,5 @@
 #include "perlinNoise.h"
 ir::PerlinNoise::PerlinNoise(unsigned int seed) {
-	perm.resize(seed);
-
-}
-
-ew::Vec2 ir::PerlinNoise::getConstants(int v) {
-	int h = v % 4;
-	if (h == 0)
-		return ew::Vec2(1.0, 1.0);
-	else if (h == 1)
-		return ew::Vec2(-1.0, 1.0);
-	else if (h == 2)
-		return ew::Vec2(-1.0, -1.0);
-	else {
-		return ew::Vec2(1.0, -1.0);
-	}
 
 }
 
@@ -26,7 +11,7 @@ ew::Vec2 ir::PerlinNoise::randomGrad(int ix, int iy, unsigned int seed) {
 	const unsigned w = 8 * sizeof(unsigned);
 	const unsigned s = w / 2;
 	unsigned a = ix, b = iy;
-	a *= 3285157000 + seed; b ^= a << s | a >> w - s; // The numbers just work don't touch them please
+	a *= 3285157000 + seed; b ^= a << s | a >> w - s; // Smoothing
 	b *= 1911520000 + seed; a ^= b << s | b >> w - s;
 	a *= 2048419000 + seed;
 	float rando = a * (ew::PI / ~(~0u >> 1));
