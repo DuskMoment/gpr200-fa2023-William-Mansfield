@@ -11,6 +11,12 @@ namespace ew {
 	{
 		load(meshData);
 	}
+	Mesh::~Mesh()
+	{
+		glDeleteVertexArrays(1, &m_vao);
+		glDeleteBuffers(1,&m_vbo);
+		glDeleteBuffers(1, &m_ebo);
+	}
 	void Mesh::load(const MeshData& meshData)
 	{
 		if (!m_initialized) {

@@ -26,6 +26,7 @@ namespace ew {
 	public:
 		Mesh() {};
 		Mesh(const MeshData& meshData);
+		~Mesh();
 		void load(const MeshData& meshData);
 		void draw(DrawMode drawMode = DrawMode::TRIANGLES)const;
 		inline int getNumVertices()const { return m_numVertices; }
