@@ -52,5 +52,5 @@ float ir::PerlinNoise::noiseGen(float x, float y, unsigned int seed) {
 	ix1 = interpolate(n0, n1, sx);
 
 	value = interpolate(ix0, ix1, sy);
-	return value; // from -1 to 1
+	return value; // from 0 to 1
 }

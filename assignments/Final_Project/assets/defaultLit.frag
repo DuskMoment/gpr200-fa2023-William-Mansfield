@@ -5,6 +5,7 @@ in Surface{
 	vec2 UV;
 	vec3 worldPosition;
 	vec3 worldNormal;
+	float yPos;
 }fs_in;
 
 uniform sampler2D _Texture;
@@ -98,9 +99,9 @@ void main(){
 	
 
 	}
+	
+	vec2 y = vec2(0, fs_in.yPos);
 
-	
-	
-	FragColor = vec4(cellColor,1.0) * texture(_Texture,fs_in.UV);
+	FragColor = vec4(cellColor,1.0) * texture(_Texture,y);
 	// FragColor = texture(_Texture,fs_in.UV);
  }

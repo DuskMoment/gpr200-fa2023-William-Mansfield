@@ -100,7 +100,7 @@ int main() {
 	glEnable(GL_DEPTH_TEST);
 
 	// loading textures
-	unsigned int mountainTexture = ew::loadTexture("assets/mountaintexture.jpg", GL_REPEAT, GL_LINEAR);
+	unsigned int mountainTexture = ew::loadTexture("assets/mountainGrad.png", GL_CLAMP_TO_EDGE, GL_LINEAR);
 	unsigned int waterTexture = ew::loadTexture("assets/watertexture.jpg", GL_REPEAT, GL_LINEAR);
 	unsigned int cellTexture = ew::loadTexture("assets/CellGrade.png", GL_CLAMP_TO_EDGE, GL_LINEAR);
 

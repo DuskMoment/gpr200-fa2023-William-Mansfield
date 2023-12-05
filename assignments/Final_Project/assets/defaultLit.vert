@@ -7,6 +7,7 @@ out Surface{
 	vec2 UV;
 	vec3 worldPosition;
 	vec3 worldNormal;
+	float yPos;
 }vs_out;
 
 uniform mat4 _Model;
@@ -17,6 +18,8 @@ out vec3 cameraVector;
 void main(){
 	vs_out.UV = vUV;
 	//testing - with out w compnent 
+
+	vs_out.yPos = (vPos.y + 1) * 0.5;
 	
 	
 	vs_out.worldPosition = vec3( _Model * vec4(vPos,1.0));
