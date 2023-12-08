@@ -315,12 +315,13 @@ namespace wm
 		return torus;
 	}
 
+	// Making the randomly generated land - Isabel Rowland
 	ew::MeshData createLand(float size, int subdivisions, int seed)
 	{
 		ew::MeshData plane;
 		float width = size;
 		float height = size;
-		ir::PerlinNoise perlin = ir::PerlinNoise::PerlinNoise(seed);
+		ir::PerlinNoise perlin = ir::PerlinNoise::PerlinNoise(seed); // Makes a perlin noise variable
 
 		//vertex
 		for (int row = 0; row <= subdivisions; row++)
@@ -331,10 +332,10 @@ namespace wm
 				float colSub = static_cast<float>(col) / subdivisions;
 				float rowSub = static_cast<float>(row) / subdivisions;
 
-				float n = perlin.noiseGen(row * 0.01, col * 0.01, seed);
-				n += 1.0;
+				float n = perlin.noiseGen(row * 0.01, col * 0.01, seed); // generates the noise with a given seed
+				n += 1.0; // setting the generated value from 0 to 1 instead of -1 to 1
 				n *= 0.5;
-				vertex.pos.y = n * 10;
+				vertex.pos.y = n * 10; // making the y values bigger
 				
 				vertex.pos.x = width * colSub;
 				
@@ -349,15 +350,17 @@ namespace wm
 			}
 		}
 
+		// Setting normals - Isabel Rowland with math help from Will
 		for (int row = 0; row <= subdivisions; row++) {
 			for (int col = 0; col <= subdivisions; col++) {
-				ew::Vec3 middle = plane.vertices[row * subdivisions + col].pos;
-				bool isRight, isUp, isLeft, isDown;
-				ew::Vec3 top, left, right, bottom;
+				ew::Vec3 middle = plane.vertices[row * subdivisions + col].pos; // the point in question
+				bool isRight, isUp, isLeft, isDown; // do all the vectors exist (is it on an edge or not)
+				ew::Vec3 top, left, right, bottom; // the vertex positions above, below, to the left, and to the right of the point
+				
+				// Gathering the positional data of the vertices above, below, left, and right
 				if (row != 0) {
 					top = plane.vertices[row * subdivisions + col - subdivisions].pos;
 					isUp = 1;
-
 				}
 				else {
 					top = middle;
@@ -387,11 +390,15 @@ namespace wm
 					bottom = middle;
 					isDown = 0;
 				}
+				
+				// Calculating the vectors from the middle to the other vertices
 				ew::Vec3 rightVec = right - middle;
 				ew::Vec3 upVec = top - middle;
 				ew::Vec3 botVec = middle - bottom;
 				ew::Vec3 leftVec = middle - left;
 				ew::Vec3 normal;
+				
+				// Calculating the normals based on what exists
 				if (isUp && isDown && isLeft && isRight) {
 					upVec = upVec + botVec;
 					rightVec = rightVec + leftVec;
@@ -412,12 +419,33 @@ namespace wm
 					upVec = upVec + botVec;
 					normal = ew::Normalize(ew::Cross(upVec, leftVec));
 				}
-				else {
+				else if (!isLeft) {
 					upVec = upVec + botVec;
 					normal = ew::Normalize(ew::Cross(upVec, rightVec));
 				}
+				if (!isRight && !isUp) {
+					botVec = bottom - middle;
+					leftVec = left - middle;
+					normal = ew::Normalize(ew::Cross(botVec, leftVec));
+				}
+				else if (!isRight && !isDown) {
+					upVec = top - middle;
+					leftVec = left - middle;
+					normal = ew::Normalize(ew::Cross(upVec, leftVec));
+				}
+				else if (!isLeft && !isDown) {
+					upVec = top - middle;
+					rightVec = right - middle;
+					normal = ew::Normalize(ew::Cross(upVec, rightVec));
+				}
+				else if (!isLeft && !isUp){
+					botVec = bottom - middle;
+					rightVec = right - middle;
+					normal = ew::Normalize(ew::Cross(botVec, rightVec));
+				}
+				
+				// Setting the normal at the point in question
 				plane.vertices[row * subdivisions + col].normal = normal;
-
 				
 
 			}

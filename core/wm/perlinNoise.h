@@ -1,10 +1,12 @@
 #pragma once
 #include "../ew/ewMath/ewMath.h"
 #include "math.h"
+
+// Isabel Rowland
 namespace ir {
 	class PerlinNoise {
 	private:
-		float gradient(float x, float y, float z, int hash);
+		float gradient(float x, float y, float z, int hash); // never used mb
 		float fade(float t);
 	public:
 		PerlinNoise(); // Default constructor
