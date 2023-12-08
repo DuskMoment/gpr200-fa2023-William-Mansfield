@@ -15,19 +15,18 @@ struct Light
 {
 	vec3 position;
 	vec3 color;
-
 };
+
 #define MAX_LIGHTS 4
 uniform Light _Lights[MAX_LIGHTS];
 uniform int numLights;
-
-
 
 struct Material
 {
 	float ambientK;
 	float diffuseK;
 	float specular;
+	// Will Mansfield added rim lighting variables
 	float rimK;
 	float shininess;
 	float rimAmbientIntesity;
@@ -39,7 +38,7 @@ uniform vec3 cameraPos;
 
 
 void main(){
-
+	// William Mansfield Cel Shader Lighting
 	
 	vec3 worldNormal = normalize(fs_in.worldNormal);
 
@@ -48,15 +47,6 @@ void main(){
 	vec3 worldToCamera = normalize(cameraPos-fs_in.worldPosition);
 
 	vec3 cellColor;
-	
-	
-	
-	//trying out a new specular equation
-	//vec3 specular = texture(_SpecularTexture, vec2(r.x+worldNormal.x,r.y + worldNormal.y)).rgb;
-
-	//cellColor =+ specular;
-
-
 
 	for(int i = 0; i < numLights; i++)
 	{
@@ -64,8 +54,8 @@ void main(){
 
 	 //ambient 
 	 cellColor += _Material.ambientK * _Lights[i].color;
+	 
 	 //diffuse 
-
 	 cellColor +=  _Material.diffuseK * _Lights[i].color * texture(_CellTexture, vec2(max(dot(worldTolightVector, worldNormal),0)),0).rgb;
 
 	 //specualr
@@ -80,13 +70,12 @@ void main(){
 
 	cellColor += _Lights[i].color *_Material.specular * specular;
 
+	// William Mansfield rim lighting
 	//rim Lighting
 	float rimLightIntens = dot(worldToCamera, worldNormal);
 
 	rimLightIntens = max(0.0, rimLightIntens);
 	rimLightIntens = 1.0 - rimLightIntens;
-	
-	
 
 	//rim intestity
 	rimLightIntens = pow(rimLightIntens,_Material.rimAmbientIntesity);
@@ -95,11 +84,9 @@ void main(){
 	vec3 rimLight = _Lights[i].color * rimLightIntens;
 	
 	cellColor += rimLight;
-
-	
-
 	}
 	
+	// William Mansfield change mountain color based on height
 	vec2 y = vec2(0, fs_in.yPos);
 
 	FragColor = vec4(cellColor,1.0) * texture(_Texture,y);

@@ -7,12 +7,14 @@ in Surface{
 	vec3 worldNormal;
 }fs_in;
 
+// Natalie Basile added variables
 uniform int numWaves;
 uniform float time;
 uniform float speed;
 
 uniform sampler2D _Texture;
 uniform sampler2D _CellTexture;
+// Natalie Basiled added Noise texture but didn't end up using
 uniform sampler2D _NoiseTexture;
 
 struct Light
@@ -24,8 +26,6 @@ struct Light
 #define MAX_LIGHTS 4
 uniform Light _Lights[MAX_LIGHTS];
 uniform int numLights;
-
-
 
 struct Material
 {
@@ -41,10 +41,18 @@ uniform Material _Material;
 
 uniform vec3 cameraPos;
 
-
 void main(){
-
 	
+	// Natalie Basile added newUV and noise
+	vec2 newUV = fs_in.UV;
+
+	float noise = texture(_NoiseTexture, fs_in.UV * numWaves + time/5 * 0.5f).r;
+	
+	// Natalie Basile scrolling but decided not to use it
+	//newUV.y = fs_in.UV.y + time * speed/100;
+	//newUV.x = fs_in.UV.x + time * speed/100;
+
+	//Lighting taken from defaultLit.frag by Will Mansfield
 	vec3 worldNormal = normalize(fs_in.worldNormal);
 
 	vec3 worldTolightVector;
@@ -52,20 +60,7 @@ void main(){
 	vec3 worldToCamera = normalize(cameraPos-fs_in.worldPosition);
 
 	vec3 cellColor;
-	
-	vec2 newUV = fs_in.UV;
 
-	float noise = texture(_NoiseTexture, fs_in.UV * numWaves + time/5 * 0.5f).r;
-	
-	//trying out a new specular equation
-	//vec3 specular = texture(_SpecularTexture, vec2(r.x+worldNormal.x,r.y + worldNormal.y)).rgb;
-
-	//cellColor =+ specular;
-	//newUV.y = fs_in.UV.y + time * speed/100;
-	//newUV.x = fs_in.UV.x + time * speed/100;
-
-
-	// Lighting taken from defaultLit.frag by Will Mansfield
 	for(int i = 0; i < numLights; i++)
 	{
 	 worldTolightVector = normalize(_Lights[i].position - fs_in.worldPosition );
@@ -94,8 +89,9 @@ void main(){
 	cellColor += rimLight;
 	}
 
-	newUV += noise * 0.1f;
+	// noise texture attempt by Natalie Basile
+	//newUV += noise * 0.1f;
 	
+	// Natalie Basile added tiling with numWaves
 	FragColor = vec4(cellColor,1.0) * texture(_Texture,newUV * numWaves);
-	//FragColor = texture(_Texture,fs_in.UV);
  }

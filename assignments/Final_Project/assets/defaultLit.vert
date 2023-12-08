@@ -17,10 +17,8 @@ out vec3 cameraVector;
 
 void main(){
 	vs_out.UV = vUV;
-	//testing - with out w compnent 
 
 	vs_out.yPos = (vPos.y/10);
-	
 	
 	vs_out.worldPosition = vec3( _Model * vec4(vPos,1.0));
 	cameraVector = vPos* mat3(_ViewProjection);

@@ -14,6 +14,7 @@ out Surface{
 uniform mat4 _Model;
 uniform mat4 _ViewProjection;
 
+// Natalie Basile water vertex shader variables
 uniform float amplitude, wavelength, speed, time;
 uniform vec2 direction;
 
@@ -21,6 +22,8 @@ uniform vec2 direction;
 void main()
 {
 	vs_out.UV = vUV;
+
+	// Natalie Basile water vertex shader
 	vec3 newPos = vPos;
 	newPos.y += cos(vUV.x * wavelength + speed * time) * amplitude + sin(vUV.y * wavelength + speed * time) * amplitude;
 

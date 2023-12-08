@@ -44,9 +44,9 @@ int numberOfLights = 1;
 
 bool orbit = false;
 
-
 struct Material
 {
+	// Will Mansfield added rim lighting variables
 	//all 1-0 ranges
 	float ambientK = 0.1;
 	float diffuseK = 0.3;
@@ -60,7 +60,8 @@ struct Material
 };
 Material material;
 
-struct Wave { // adding struct for water wave
+// Natalie Basile created Wave struct
+struct Wave {
 	float amplitude = 0.1;
 	float wavelength = 50.0;
 	float speed = 1.5;
@@ -101,20 +102,21 @@ int main() {
 	glEnable(GL_DEPTH_TEST);
 
 	// loading textures
-	unsigned int mountainTexture = ew::loadTexture("assets/mountainGrad.png", GL_CLAMP_TO_EDGE, GL_LINEAR);
-	unsigned int waterTexture = ew::loadTexture("assets/watertexture.jpg", GL_REPEAT, GL_LINEAR);
-	unsigned int cellTexture = ew::loadTexture("assets/CellGrade.png", GL_CLAMP_TO_EDGE, GL_LINEAR);
-	unsigned int waterDistortTexture = ew::loadTexture("assets/waterNoiseMap.jpg", GL_REPEAT, GL_LINEAR);
+	unsigned int mountainTexture = ew::loadTexture("assets/mountainGrad.png", GL_CLAMP_TO_EDGE, GL_LINEAR); // Izzy and Will added mountainGradTexture
+	unsigned int waterTexture = ew::loadTexture("assets/watertexture.jpg", GL_REPEAT, GL_LINEAR); // Natalie Basile added waterTexture
+	unsigned int waterDistortTexture = ew::loadTexture("assets/waterNoiseMap.jpg", GL_REPEAT, GL_LINEAR); // Natalie basile added waterNoiseTexture
+	unsigned int cellTexture = ew::loadTexture("assets/CellGrade.png", GL_CLAMP_TO_EDGE, GL_LINEAR); // Will Mansfield added cellGradeTexture
 
 	// shaders
 	ew::Shader shader("assets/defaultLit.vert", "assets/defaultLit.frag");
 	ew::Shader unlitShader("assets/unlit.vert", "assets/unlit.frag");
+	// Natalie Basile created water shader
 	ew::Shader waterShader("assets/water.vert", "assets/water.frag");
 
 	// define unlit spehere mesh
 	ew::Mesh unlitShpereMesh(ew::createSphere(0.2, 10));
 
-	// define water mesh, transform, position
+	// Natalie Basile created waterPlaneMesh + Transform w/position + Material values
 	ew::Mesh waterPlaneMesh(ew::createPlane(40.0f, 40.0f, 400)); // New water plane for water shaders
 	ew::Transform waterPlaneTransform; // transform for water plan
 	waterPlaneTransform.position = ew::Vec3(0.0, -1.05, 0); // setting pos for water plane transform
@@ -125,7 +127,6 @@ int main() {
 	wave.material.shininess = 256;
 	wave.material.rimAmbientIntestiy = 4;
 
-
 	ew::Transform unLitsphereTransfrom[MAX_LIGHTS];
 
 	unLitsphereTransfrom[0].position = ew::Vec3(0.0, 10, -10.0);
@@ -133,7 +134,7 @@ int main() {
 	unLitsphereTransfrom[2].position = ew::Vec3(10.0, 10, 0.0);
 	unLitsphereTransfrom[3].position = ew::Vec3(-10.0, 10, 0.0);
 
-	// define land mesh, transform, position
+	// Izzy defined land mesh, transform, position
 	int seed = 300;
 	ew::Mesh* landMesh = new ew::Mesh(wm::createLand(40.0f, 400, seed)); // last variable is seed for generation
 	ew::Transform landTransform;
@@ -152,7 +153,6 @@ int main() {
 	lights[3].position = unLitsphereTransfrom[3].position;
 	lights[3].color = ew::Vec3(1.0, 1.0, 0.0);
 
-
 	resetCamera(camera, cameraController);
 
 	while (!glfwWindowShouldClose(window)) {
@@ -170,12 +170,13 @@ int main() {
 		glClearColor(bgColor.x, bgColor.y, bgColor.z, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		//shader for mountains 
+		// Izzy created shader for mountains 
 		shader.use();
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, mountainTexture);
 		shader.setInt("_Texture", 0);
 
+		// Will created shader for cell shading
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, cellTexture);
 		shader.setInt("_CellTexture", 1);
@@ -184,24 +185,24 @@ int main() {
 		shader.setMat4("_ViewProjection", camera.ProjectionMatrix() * camera.ViewMatrix());
 		shader.setVec3("cameraTarget", camera.target);
 
-		//Draw land
+		// Izzy draws land
 		shader.setMat4("_Model", landTransform.getModelMatrix());
 		landMesh->draw();
 		
-		// set positions and colors for lights
+		// Will sets positions and colors for lights
 		for (int i = 0; i < numberOfLights; i++)
 		{
 			shader.setVec3("_Lights[" + std::to_string(i) + "].position", lights[i].position);
 			shader.setVec3("_Lights[" + std::to_string(i) + "].color", lights[i].color);
 		}
 
-		//material uniforms 
+		// Will set material uniforms 
 		shader.setFloat("_Material.ambientK", material.ambientK);
 		shader.setFloat("_Material.diffuseK", material.diffuseK);
 		shader.setFloat("_Material.specular", material.specular);
 		shader.setFloat("_Material.shininess", material.shininess);
 
-		//added Rim lighting
+		// Will added Rim lighting
 		shader.setFloat("_Material.rimK", material.rimK);
 		shader.setFloat("_Material.rimAmbientIntesity", material.rimAmbientIntestiy);
 
@@ -223,25 +224,27 @@ int main() {
 			unlitShpereMesh.draw();
 		}
 
-		// water shader
+		// Natalie created water shader
 		waterShader.use();
 		waterShader.setMat4("_ViewProjection", camera.ProjectionMatrix() * camera.ViewMatrix());
 		waterShader.setMat4("_Model", waterPlaneTransform.getModelMatrix());
 
-		// water texture
+		// Natalie added water texture
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, waterTexture);
 		waterShader.setInt("_Texture", 0);
 
+		// Copied and pasted from Will's shader
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, cellTexture);
 		waterShader.setInt("_CellTexture", 1);
 
+		// Natalie added water noise texture
 		glActiveTexture(GL_TEXTURE2);
 		glBindTexture(GL_TEXTURE_2D, waterDistortTexture);
 		waterShader.setInt("_NoiseTexture", 2);
 
-		// water material
+		// natalie set water material values
 		waterShader.setFloat("_Material.ambientK", wave.material.ambientK);
 		waterShader.setFloat("_Material.diffuseK", wave.material.diffuseK);
 		waterShader.setFloat("_Material.specular", wave.material.specular);
@@ -250,7 +253,7 @@ int main() {
 		waterShader.setFloat("_Material.rimK", wave.material.rimK);
 		waterShader.setFloat("_Material.rimAmbientIntesity", wave.material.rimAmbientIntestiy);
 
-		// wave variables
+		// Natalie created wave variables
 		waterShader.setFloat("amplitude", wave.amplitude);
 		waterShader.setFloat("wavelength", wave.wavelength);
 		waterShader.setFloat("speed", wave.speed);
@@ -260,14 +263,15 @@ int main() {
 
 		waterShader.setInt("numLights", numberOfLights);
 
+		// Copied and pasted from Will's light for loop
 		for (int i = 0; i < numberOfLights; i++)
 		{
 			waterShader.setVec3("_Lights[" + std::to_string(i) + "].position", lights[i].position);
 			waterShader.setVec3("_Lights[" + std::to_string(i) + "].color", lights[i].color);
 		}
-
 		waterShader.setVec3("cameraPos", camera.position);
-		// draw water
+		
+		// Natalie draws water
 		waterPlaneMesh.draw();
 
 		// Render UI
@@ -295,6 +299,7 @@ int main() {
 					resetCamera(camera, cameraController);
 				}
 			}
+			// Will created material GUI
 			if (ImGui::CollapsingHeader("material"))
 			{
 				ImGui::SliderFloat("ambient", &material.ambientK, 0, 1);
@@ -303,10 +308,10 @@ int main() {
 				ImGui::SliderFloat("shininess", &material.shininess, 2, 256);
 				ImGui::SliderFloat("ambient rim", &material.rimAmbientIntestiy, 0, 10);
 				ImGui::SliderFloat("rim", &material.rimK, 0, 1);
-				
 			}
 			ImGui::SliderInt("number of lights", &numberOfLights, 1, MAX_LIGHTS);
 
+			// Will created orbit GUI and functionality
 			ImGui::Checkbox("orbit", &orbit);
 			if (orbit == true)
 			{
@@ -318,7 +323,7 @@ int main() {
 				}
 			}
 
-			//lights UI
+			// Will created lights GUI
 			for (int i = 0; i < numberOfLights; i++)
 			{
 				ImGui::PushID(i);
@@ -330,14 +335,15 @@ int main() {
 				}
 				ImGui::PopID();
 			}
-			//water IU
+
+			// Natalie created water GUI
 			if (ImGui::CollapsingHeader("water")) {
 				ImGui::DragFloat("amplitude", &wave.amplitude, 0.05f);
 				ImGui::DragFloat("wavelength", &wave.wavelength, 0.05f);
 				ImGui::DragFloat("speed", &wave.speed, 0.05f);
 				ImGui::DragInt("tiling", &wave.numWaves, 0.05f);
 
-				//water mat
+				// Will added water material GUI
 				if (ImGui::CollapsingHeader("water material"))
 				{
 					ImGui::SliderFloat("ambient", &wave.material.ambientK, 0, 1);
@@ -349,7 +355,7 @@ int main() {
 				}
 			}
 
-			//land UI
+			// Izzy and Will added land GUI
 			if (ImGui::CollapsingHeader("Land")) {
 				if (ImGui::DragInt("seed", &seed))
 				{
@@ -357,7 +363,6 @@ int main() {
 					landMesh = new ew::Mesh(wm::createLand(40.0f, 400, seed));
 				}
 			}
-
 
 			ImGui::ColorEdit3("BG color", &bgColor.x);
 			ImGui::End();
