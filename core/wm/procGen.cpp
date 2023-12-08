@@ -357,6 +357,7 @@ namespace wm
 				if (row != 0) {
 					top = plane.vertices[row * subdivisions + col - subdivisions].pos;
 					isUp = 1;
+
 				}
 				else {
 					top = middle;
@@ -386,15 +387,37 @@ namespace wm
 					bottom = middle;
 					isDown = 0;
 				}
-				
 				ew::Vec3 rightVec = right - middle;
 				ew::Vec3 upVec = top - middle;
 				ew::Vec3 botVec = middle - bottom;
 				ew::Vec3 leftVec = middle - left;
-				upVec = upVec + botVec;
-				rightVec = rightVec + leftVec;
-				ew::Vec3 normal = ew::Normalize(ew::Cross(upVec, rightVec));
+				ew::Vec3 normal;
+				if (isUp && isDown && isLeft && isRight) {
+					upVec = upVec + botVec;
+					rightVec = rightVec + leftVec;
+					normal = ew::Normalize(ew::Cross(upVec, rightVec));
+					
+				}
+				else if (!isUp) {
+					botVec = bottom - middle;
+					rightVec = rightVec + leftVec;
+					ew::Vec3 normal = ew::Normalize(ew::Cross(botVec, rightVec));
+				}
+				else if (!isDown) {
+					rightVec = rightVec + leftVec;
+					normal = ew::Normalize(ew::Cross(upVec, rightVec));
+				}
+				else if (!isRight) {
+					leftVec = left - middle;
+					upVec = upVec + botVec;
+					normal = ew::Normalize(ew::Cross(upVec, leftVec));
+				}
+				else {
+					upVec = upVec + botVec;
+					normal = ew::Normalize(ew::Cross(upVec, rightVec));
+				}
 				plane.vertices[row * subdivisions + col].normal = normal;
+
 				
 
 			}
