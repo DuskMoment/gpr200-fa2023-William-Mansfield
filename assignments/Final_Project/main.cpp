@@ -62,8 +62,9 @@ Material material;
 
 struct Wave { // adding struct for water wave
 	float amplitude = 0.1;
-	float wavelength = 10.0;
-	float speed = 1.0;
+	float wavelength = 50.0;
+	float speed = 1.5;
+	int numWaves = 10;
 	Material material;
 };
 Wave wave;
@@ -115,7 +116,7 @@ int main() {
 	// define water mesh, transform, position
 	ew::Mesh waterPlaneMesh(ew::createPlane(40.0f, 40.0f, 400)); // New water plane for water shaders
 	ew::Transform waterPlaneTransform; // transform for water plan
-	waterPlaneTransform.position = ew::Vec3(0.0, -1.0, 0); // setting pos for water plane transform
+	waterPlaneTransform.position = ew::Vec3(0.0, -1.05, 0); // setting pos for water plane transform
 	wave.material.ambientK = 0.1;
 	wave.material.diffuseK = 0.3;
 	wave.material.specular = 0.5;
@@ -126,10 +127,10 @@ int main() {
 
 	ew::Transform unLitsphereTransfrom[MAX_LIGHTS];
 
-	unLitsphereTransfrom[0].position = ew::Vec3(0.0, 1.5, -2.0);
-	unLitsphereTransfrom[1].position = ew::Vec3(0.0, 1.5, 2.0);
-	unLitsphereTransfrom[2].position = ew::Vec3(2.0, 1.5, 0.0);
-	unLitsphereTransfrom[3].position = ew::Vec3(-2.0, 1.5, 0.0);
+	unLitsphereTransfrom[0].position = ew::Vec3(0.0, 10, -10.0);
+	unLitsphereTransfrom[1].position = ew::Vec3(0.0, 10, 10.0);
+	unLitsphereTransfrom[2].position = ew::Vec3(10.0, 10, 0.0);
+	unLitsphereTransfrom[3].position = ew::Vec3(-10.0, 10, 0.0);
 
 	// define land mesh, transform, position
 	int seed = 300;
@@ -247,7 +248,7 @@ int main() {
 		waterShader.setFloat("amplitude", wave.amplitude);
 		waterShader.setFloat("wavelength", wave.wavelength);
 		waterShader.setFloat("speed", wave.speed);
-		waterShader.setInt("numWaves", 5.0f); // not sure if going to be needed
+		waterShader.setInt("numWaves", wave.numWaves);
 		waterShader.setFloat("time", time);
 		waterShader.setVec2("direction", ew::Vec2(1.0f, 0.0f));
 
@@ -328,6 +329,7 @@ int main() {
 				ImGui::DragFloat("amplitude", &wave.amplitude, 0.05f);
 				ImGui::DragFloat("wavelength", &wave.wavelength, 0.05f);
 				ImGui::DragFloat("speed", &wave.speed, 0.05f);
+				ImGui::DragInt("tiling", &wave.numWaves, 0.05f);
 
 				//water mat
 				if (ImGui::CollapsingHeader("water material"))
