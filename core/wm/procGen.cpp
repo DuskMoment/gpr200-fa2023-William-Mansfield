@@ -322,10 +322,6 @@ namespace wm
 		float height = size;
 		ir::PerlinNoise perlin = ir::PerlinNoise::PerlinNoise(seed);
 
-		
-
-		
-
 		//vertex
 		for (int row = 0; row <= subdivisions; row++)
 		{
@@ -352,6 +348,58 @@ namespace wm
 				plane.vertices.push_back(vertex);
 			}
 		}
+
+		for (int row = 0; row <= subdivisions; row++) {
+			for (int col = 0; col <= subdivisions; col++) {
+				ew::Vec3 middle = plane.vertices[row * subdivisions + col].pos;
+				bool isRight, isUp, isLeft, isDown;
+				ew::Vec3 top, left, right, bottom;
+				if (row != 0) {
+					top = plane.vertices[row * subdivisions + col - subdivisions].pos;
+					isUp = 1;
+				}
+				else {
+					top = middle;
+					isUp = 0;
+				}
+				if (col != 0) {
+					left = plane.vertices[row * subdivisions + col - 1].pos;
+					isLeft = 1;
+				}
+				else {
+					left = middle;
+					isLeft = 0;
+				}
+				if (col != subdivisions) {
+					right = plane.vertices[row * subdivisions + col + 1].pos;
+					isRight = 1;
+				}
+				else {
+					right = middle;
+					isRight = 0;
+				}
+				if (row != subdivisions) {
+					bottom = plane.vertices[row * subdivisions + col + subdivisions].pos;
+					isDown = 1;
+				}
+				else {
+					bottom = middle;
+					isDown = 0;
+				}
+				
+				ew::Vec3 rightVec = right - middle;
+				ew::Vec3 upVec = top - middle;
+				ew::Vec3 botVec = middle - bottom;
+				ew::Vec3 leftVec = middle - left;
+				upVec = upVec + botVec;
+				rightVec = rightVec + leftVec;
+				ew::Vec3 normal = ew::Normalize(ew::Cross(upVec, rightVec));
+				plane.vertices[row * subdivisions + col].normal = normal;
+				
+
+			}
+		}
+
 		//indecies
 		float columbs = subdivisions + 1;
 		for (int row = 0; row < subdivisions; row++)
