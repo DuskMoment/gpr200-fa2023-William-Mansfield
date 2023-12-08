@@ -9,11 +9,12 @@ out Surface{
 	vec3 worldNormal;
 }vs_out;
 
+
+
 uniform mat4 _Model;
 uniform mat4 _ViewProjection;
 
 uniform float amplitude, wavelength, speed, time;
-uniform int numWaves;
 uniform vec2 direction;
 
 

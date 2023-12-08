@@ -104,6 +104,7 @@ int main() {
 	unsigned int mountainTexture = ew::loadTexture("assets/mountainGrad.png", GL_CLAMP_TO_EDGE, GL_LINEAR);
 	unsigned int waterTexture = ew::loadTexture("assets/watertexture.jpg", GL_REPEAT, GL_LINEAR);
 	unsigned int cellTexture = ew::loadTexture("assets/CellGrade.png", GL_CLAMP_TO_EDGE, GL_LINEAR);
+	unsigned int waterDistortTexture = ew::loadTexture("assets/waterNoiseMap.jpg", GL_REPEAT, GL_LINEAR);
 
 	// shaders
 	ew::Shader shader("assets/defaultLit.vert", "assets/defaultLit.frag");
@@ -231,9 +232,14 @@ int main() {
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, waterTexture);
 		waterShader.setInt("_Texture", 0);
+
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, cellTexture);
 		waterShader.setInt("_CellTexture", 1);
+
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, waterDistortTexture);
+		waterShader.setInt("_NoiseTexture", 2);
 
 		// water material
 		waterShader.setFloat("_Material.ambientK", wave.material.ambientK);
