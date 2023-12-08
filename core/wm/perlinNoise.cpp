@@ -1,16 +1,23 @@
 #include "perlinNoise.h"
-ir::PerlinNoise::PerlinNoise(unsigned int seed) {
 
+// Isabel Rowland
+
+ir::PerlinNoise::PerlinNoise(unsigned int seed) {
+	// Having the seed here is pointless it's just a default constructor
 }
 
+// Interpolate between two values for smoothness, etc.
 float ir::PerlinNoise::interpolate(float a, float b, float w) { // w is the weight
 	return (b - a) * (3.0 - w * 2.0) * w * w + a;
 }
 
+// Generates a pseudorandom gradient based on given values and a seed
+// base code was courtesy of both prior knowledge and the wikipedia page on Perlin Noise
 ew::Vec2 ir::PerlinNoise::randomGrad(int ix, int iy, unsigned int seed) {
 	const unsigned w = 8 * sizeof(unsigned);
 	const unsigned s = w / 2;
 	unsigned a = ix, b = iy;
+	// 
 	a *= 3285157000 + seed; b ^= a << s | a >> w - s; // Smoothing
 	b *= 1911520000 + seed; a ^= b << s | b >> w - s;
 	a *= 2048419000 + seed;
@@ -21,6 +28,7 @@ ew::Vec2 ir::PerlinNoise::randomGrad(int ix, int iy, unsigned int seed) {
 	return v;
 }
 
+// Dot product of the gradient and the grid values
 float ir::PerlinNoise::dotGridGrad(int ix, int iy, float x, float y, unsigned int seed) {
 	ew::Vec2 grad = randomGrad(ix, iy, seed);
 	float dx = x - (float)ix;
@@ -29,6 +37,8 @@ float ir::PerlinNoise::dotGridGrad(int ix, int iy, float x, float y, unsigned in
 	return (dx * grad.x + dy * grad.y);
 }
 
+
+// noise gen courtesy of help from wikipedia - Isabel Rowland
 float ir::PerlinNoise::noiseGen(float x, float y, unsigned int seed) {
 	// Determine grid cell coordinates
 	int x0 = (int)floor(x);
@@ -52,5 +62,5 @@ float ir::PerlinNoise::noiseGen(float x, float y, unsigned int seed) {
 	ix1 = interpolate(n0, n1, sx);
 
 	value = interpolate(ix0, ix1, sy);
-	return value; // from 0 to 1
+	return value; // from -1 to 1
 }
